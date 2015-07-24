@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+
+        <record model="ir.ui.view" id="account_invoice_maturity_date_view_form">
+            <field name="model">account.invoice.maturity_date</field>
+            <field name="type">form</field>
+            <field name="name">maturity_date_form</field>
+        </record>
+        <record model="ir.ui.view" id="account_invoice_maturity_date_view_list">
+            <field name="model">account.invoice.maturity_date</field>
+            <field name="type">tree</field>
+            <field name="name">maturity_date_list</field>
+        </record>
+        <record model="ir.ui.view" id="modify_start_view_form">
+            <field name="model">account.invoice.modify_maturities.start</field>
+            <field name="type">form</field>
+            <field name="name">modify_maturities_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_modify_maturities">
+            <field name="name">Modify Maturities</field>
+            <field name="wiz_name">account.invoice.modify_maturities</field>
+        </record>
+        <record model="ir.ui.view" id="invoice_view_form">
+            <field name="model">account.invoice</field>
+            <field name="inherit" ref="account_invoice.invoice_view_form"/>
+            <field name="name">invoice_form</field>
+        </record>
+    </data>
+</tryton>

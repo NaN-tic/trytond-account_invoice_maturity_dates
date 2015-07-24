@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Modify Maturities Start">
+    <label name="invoice_amount"/>
+    <field name="invoice_amount"/>
+    <label name="currency"/>
+    <field name="currency"/>
+    <label name="lines_amount"/>
+    <field name="lines_amount"/>
+    <label name="pending_amount"/>
+    <field name="pending_amount"/>
+    <field name="maturities" colspan="4"/>
+</form>
