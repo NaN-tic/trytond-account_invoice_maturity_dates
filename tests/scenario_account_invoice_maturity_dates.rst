@@ -296,3 +296,61 @@ Partialy pay the invoice and check we can not change anymore the maturities::
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
+
+
+Create a refund and check we can modify it maturities::
+
+    >>> credit_note = Invoice()
+    >>> credit_note.type = 'in_credit_note'
+    >>> credit_note.party = party
+    >>> credit_note.invoice_date = today
+    >>> credit_note.payment_term = payment_term
+    >>> line = credit_note.lines.new()
+    >>> line.product = product
+    >>> line.quantity = 8
+    >>> credit_note.untaxed_amount
+    Decimal('200.00')
+    >>> credit_note.tax_amount
+    Decimal('20.00')
+    >>> credit_note.total_amount
+    Decimal('220.00')
+    >>> credit_note.click('post')
+    >>> modify = Wizard('account.invoice.modify_maturities', [credit_note])
+    >>> modify.form.invoice_amount
+    Decimal('220.00')
+    >>> modify.form.lines_amount
+    Decimal('220.00')
+    >>> modify.form.pending_amount
+    Decimal('0.00')
+    >>> first_maturity, second_maturity = modify.form.maturities
+    >>> first_maturity.amount
+    Decimal('110.00')
+    >>> first_maturity.date == today
+    True
+    >>> second_maturity.amount
+    Decimal('110.00')
+    >>> second_maturity.date == today + relativedelta(days=15)
+    True
+    >>> first_maturity.amount = Decimal('55.0')
+    >>> modify.form.pending_amount
+    Decimal('55.00')
+    >>> new_maturity = modify.form.maturities.new()
+    >>> new_maturity.amount
+    Decimal('55.00')
+    >>> new_maturity.date = today + relativedelta(days=2)
+    >>> modify.execute('modify')
+    >>> credit_note.reload()
+    >>> first, second, third = sorted(credit_note.lines_to_pay,
+    ...     key=lambda a: a.maturity_date)
+    >>> first.debit
+    Decimal('55.0')
+    >>> first.maturity_date == today
+    True
+    >>> second.debit
+    Decimal('55.00')
+    >>> second.maturity_date == today + relativedelta(days=2)
+    True
+    >>> third.debit
+    Decimal('110.00')
+    >>> third.maturity_date == today + relativedelta(days=15)
+    True

@@ -142,6 +142,8 @@ class ModifyMaturities(Wizard):
                 amount = line.credit - line.debit
                 if line.amount_second_currency:
                     amount = line.amount_second_currency
+                if 'credit_note' in invoice.type:
+                    amount = amount.copy_negate()
                 lines.append({
                         'id': line.id,
                         'move_line': line.id,
@@ -167,8 +169,10 @@ class ModifyMaturities(Wizard):
         Move.draft([invoice.move])
         processed = set()
         for maturity in self.start.maturities:
-            new_line = invoice._get_move_line(maturity.date,
-                maturity.amount)
+            amount = maturity.amount
+            if 'credit_note' in invoice.type:
+                amount = amount.copy_negate()
+            new_line = invoice._get_move_line(maturity.date, amount)
             line = maturity.move_line
             if not line:
                 new_line['move'] = invoice.move.id
