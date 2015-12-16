@@ -173,6 +173,10 @@ class ModifyMaturities(Wizard):
             if 'credit_note' in invoice.type:
                 amount = amount.copy_negate()
             new_line = invoice._get_move_line(maturity.date, amount)
+            # With the speedup patch this may return a Line instance
+            # XXX: Use instance when patch is commited
+            if isinstance(new_line, Line):
+                new_line = new_line._save_values
             line = maturity.move_line
             if not line:
                 new_line['move'] = invoice.move.id
