@@ -295,7 +295,7 @@ Partialy pay the invoice and check we can not change anymore the maturities::
     >>> modify = Wizard('account.invoice.modify_maturities', [invoice])
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
+    UserError: ('UserError', (u'Can not modify maturities of invoice 1 Party because its line (Main Payable) is reconciled', ''))
 
 
 Create a refund and check we can modify it maturities::
