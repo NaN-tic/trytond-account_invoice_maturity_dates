@@ -112,12 +112,15 @@ Create chart of accounts::
     >>> create_chart.form.account_payable = payable
     >>> create_chart.execute('create_properties')
 
-Allow to cancel moves on expense jounral::
+Allow to cancel moves on expense and revenue jounral::
 
     >>> Journal = Model.get('account.journal')
     >>> expense_journal, = Journal.find([('type', '=', 'expense')])
     >>> expense_journal.update_posted = True
     >>> expense_journal.save()
+    >>> revenue_journal, = Journal.find([('type', '=', 'revenue')])
+    >>> revenue_journal.update_posted = True
+    >>> revenue_journal.save()
 
 Configure cash journal::
 
@@ -178,6 +181,7 @@ Create product::
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.supplier_taxes.append(tax)
+    >>> template.customer_taxes.append(Tax(tax.id))
     >>> template.save()
     >>> product.template = template
     >>> product.save()
@@ -351,6 +355,124 @@ Create a refund and check we can modify it maturities::
     >>> second.maturity_date == today + relativedelta(days=2)
     True
     >>> third.debit
+    Decimal('110.00')
+    >>> third.maturity_date == today + relativedelta(days=15)
+    True
+
+Create customer invoice::
+
+    >>> Invoice = Model.get('account.invoice')
+    >>> invoice = Invoice()
+    >>> invoice.type = 'out_invoice'
+    >>> invoice.party = party
+    >>> invoice.invoice_date = today
+    >>> invoice.payment_term = payment_term
+    >>> line = invoice.lines.new()
+    >>> line.product = product
+    >>> line.quantity = 8
+    >>> line.unit_price = Decimal('25.0')
+    >>> invoice.untaxed_amount
+    Decimal('200.00')
+    >>> invoice.tax_amount
+    Decimal('20.00')
+    >>> invoice.total_amount
+    Decimal('220.00')
+    >>> invoice.click('post')
+
+Split first maturity into two::
+
+    >>> modify = Wizard('account.invoice.modify_maturities', [invoice])
+    >>> modify.form.invoice_amount
+    Decimal('220.00')
+    >>> modify.form.lines_amount
+    Decimal('220.00')
+    >>> modify.form.pending_amount
+    Decimal('0.00')
+    >>> first_maturity, second_maturity = modify.form.maturities
+    >>> first_maturity.amount
+    Decimal('110.00')
+    >>> first_maturity.date == today
+    True
+    >>> second_maturity.amount
+    Decimal('110.00')
+    >>> second_maturity.date == today + relativedelta(days=15)
+    True
+    >>> first_maturity.amount = Decimal('55.0')
+    >>> new_maturity = modify.form.maturities.new()
+    >>> new_maturity.amount
+    Decimal('55.00')
+    >>> new_maturity.date = today + relativedelta(days=2)
+    >>> modify.execute('modify')
+    >>> invoice.reload()
+    >>> first, second, third = sorted(invoice.lines_to_pay,
+    ...     key=lambda a: a.maturity_date)
+    >>> first.debit
+    Decimal('55.0')
+    >>> first.maturity_date == today
+    True
+    >>> second.debit
+    Decimal('55.00')
+    >>> second.maturity_date == today + relativedelta(days=2)
+    True
+    >>> third.debit
+    Decimal('110.00')
+    >>> third.maturity_date == today + relativedelta(days=15)
+    True
+
+Create a customer refund and check we can modify it maturities::
+
+    >>> credit_note = Invoice()
+    >>> credit_note.type = 'out_credit_note'
+    >>> credit_note.party = party
+    >>> credit_note.invoice_date = today
+    >>> credit_note.payment_term = payment_term
+    >>> line = credit_note.lines.new()
+    >>> line.product = product
+    >>> line.quantity = 8
+    >>> line.unit_price = Decimal('25.0')
+    >>> credit_note.untaxed_amount
+    Decimal('200.00')
+    >>> credit_note.tax_amount
+    Decimal('20.00')
+    >>> credit_note.total_amount
+    Decimal('220.00')
+    >>> credit_note.click('post')
+    >>> modify = Wizard('account.invoice.modify_maturities', [credit_note])
+    >>> modify.form.invoice_amount
+    Decimal('220.00')
+    >>> modify.form.lines_amount
+    Decimal('220.00')
+    >>> modify.form.pending_amount
+    Decimal('0.00')
+    >>> first_maturity, second_maturity = modify.form.maturities
+    >>> first_maturity.amount
+    Decimal('110.00')
+    >>> first_maturity.date == today
+    True
+    >>> second_maturity.amount
+    Decimal('110.00')
+    >>> second_maturity.date == today + relativedelta(days=15)
+    True
+    >>> first_maturity.amount = Decimal('55.0')
+    >>> modify.form.pending_amount
+    Decimal('55.00')
+    >>> new_maturity = modify.form.maturities.new()
+    >>> new_maturity.amount
+    Decimal('55.00')
+    >>> new_maturity.date = today + relativedelta(days=2)
+    >>> modify.execute('modify')
+    >>> credit_note.reload()
+    >>> first, second, third = sorted(credit_note.lines_to_pay,
+    ...     key=lambda a: a.maturity_date)
+    >>> first.credit
+    Decimal('55.0')
+    >>> first.maturity_date == today
+    True
+    >>> second.credit
+    Decimal('55.00')
+    >>> second.maturity_date == today + relativedelta(days=2)
+    True
+    >>> third.credit
     Decimal('110.00')
     >>> third.maturity_date == today + relativedelta(days=15)
     True
