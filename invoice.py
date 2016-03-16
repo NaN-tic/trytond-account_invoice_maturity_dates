@@ -20,8 +20,7 @@ class Invoice:
         super(Invoice, cls).__setup__()
         cls._buttons.update({
                 'modify_maturities': {
-                    'invisible': ((Eval('state') != 'posted')
-                        | ~Eval('type').in_(['in_invoice', 'in_credit_note'])),
+                    'invisible': (Eval('state') != 'posted'),
                     'icon': 'tryton-ok',
                     },
                 })
@@ -142,7 +141,7 @@ class ModifyMaturities(Wizard):
                 amount = line.credit - line.debit
                 if line.amount_second_currency:
                     amount = line.amount_second_currency
-                if 'credit_note' in invoice.type:
+                if invoice.type in ['in_credit_note', 'out_invoice']:
                     amount = amount.copy_negate()
                 lines.append({
                         'id': line.id,
@@ -170,7 +169,7 @@ class ModifyMaturities(Wizard):
         processed = set()
         for maturity in self.start.maturities:
             amount = maturity.amount
-            if 'credit_note' in invoice.type:
+            if invoice.type in ['in_credit_note', 'out_invoice']:
                 amount = amount.copy_negate()
             new_line = invoice._get_move_line(maturity.date, amount)
             # With the speedup patch this may return a Line instance
