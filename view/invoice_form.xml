@@ -6,4 +6,12 @@
             position="inside">
         <button name="modify_maturities" string="Modify Maturities"/>
     </xpath>
+    <xpath expr="/form/notebook/page[@id='invoice']/group/group/group[@id='buttons']/button[@name='post']"
+            position="after">
+        <button name="post_and_modify_maturities" string="Post"/>
+    </xpath>
+    <xpath expr="/form/notebook/page[@id='invoice']/group/group/group[@id='buttons']"
+            position="replace_attributes">
+        <group id="buttons" col="12"/>
+    </xpath>
 </data>
