@@ -7,9 +7,18 @@ from trytond.pyson import Eval
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 
-__all__ = ['Invoice', 'InvoiceMaturityDate', 'ModifyMaturitiesStart',
-    'ModifyMaturities']
+__all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
+    'ModifyMaturitiesStart', 'ModifyMaturities']
 __metaclass__ = PoolMeta
+
+
+class Configuration:
+    __name__ = 'account.configuration'
+
+    maturities_on_customer_post = fields.Boolean('Show Maturities on '
+        'Customer Invoices Post')
+    maturities_on_supplier_post = fields.Boolean('Show Maturities on '
+        'Supplier Invoices Post')
 
 
 class Invoice:
@@ -18,11 +27,19 @@ class Invoice:
     @classmethod
     def __setup__(cls):
         super(Invoice, cls).__setup__()
+        post_definition = cls._buttons['post'].copy()
+        post_definition['icon'] = 'tryton-ok'
+        # We must duplicate the button otherwise the return value is not
+        # correctly due to missing returns on inheritance
         cls._buttons.update({
                 'modify_maturities': {
                     'invisible': (Eval('state') != 'posted'),
                     'icon': 'tryton-ok',
                     },
+                'post_and_modify_maturities': post_definition,
+                })
+        cls._buttons['post'].update({
+                'invisible': True,
                 })
 
     @classmethod
@@ -30,6 +47,22 @@ class Invoice:
         'account_invoice_maturity_dates.wizard_modify_maturities')
     def modify_maturities(cls, invoices):
         pass
+
+    @classmethod
+    @ModelView.button
+    def post_and_modify_maturities(cls, invoices):
+        pool = Pool()
+        Configuration = pool.get('account.configuration')
+        config = Configuration(1)
+        cls.post(invoices)
+        invoice_types = set([i.type for i in invoices])
+
+        if (config.maturities_on_customer_post
+                and set(['out_invoice', 'out_credit_note']) & invoice_types):
+            return cls.modify_maturities(invoices)
+        if (config.maturities_on_supplier_post
+                and set(['in_invoice', 'in_credit_note']) & invoice_types):
+            return cls.modify_maturities(invoices)
 
 
 class InvoiceMaturityDate(ModelView):

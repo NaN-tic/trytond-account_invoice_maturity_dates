@@ -18,6 +18,14 @@ msgstr ""
 "Falta %(amount)s %(currency) per assignar. Si us plau, assigneu-lo a algun "
 "venciment."
 
+msgctxt "field:account.configuration,maturities_on_customer_post:"
+msgid "Show Maturities on Customer Invoices Post"
+msgstr "Mostra venciments al confirmar factures de client"
+
+msgctxt "field:account.configuration,maturities_on_supplier_post:"
+msgid "Show Maturities on Supplier Invoices Post"
+msgstr "Mostra venciments al confirmar factures de proveïdor"
+
 msgctxt "field:account.invoice.maturity_date,amount:"
 msgid "Amount"
 msgstr "Import"
@@ -82,6 +90,18 @@ msgctxt "model:ir.action,name:wizard_modify_maturities"
 msgid "Modify Maturities"
 msgstr "Modificar venciments"
 
+msgctxt "view:account.configuration:"
+msgid "Customer Invoices"
+msgstr "Factures client"
+
+msgctxt "view:account.configuration:"
+msgid "Force maturities revision when posting:"
+msgstr "Forçar la revisió dels venciments al confirmar:"
+
+msgctxt "view:account.configuration:"
+msgid "Supplier Invoices"
+msgstr "Factures de proveïdor"
+
 msgctxt "view:account.invoice.maturity_date:"
 msgid "Invoice Maturity Date"
 msgstr "Dates de venciment de factura"
@@ -93,6 +113,10 @@ msgstr "Inici modificar venciments"
 msgctxt "view:account.invoice:"
 msgid "Modify Maturities"
 msgstr "Modificar venciments"
+
+msgctxt "view:account.invoice:"
+msgid "Post"
+msgstr "Confirma"
 
 msgctxt "wizard_button:account.invoice.modify_maturities,start,end:"
 msgid "Cancel"
