@@ -6,6 +6,7 @@ from .invoice import *
 
 def register():
     Pool.register(
+        Configuration,
         Invoice,
         InvoiceMaturityDate,
         ModifyMaturitiesStart,
