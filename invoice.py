@@ -174,7 +174,7 @@ class ModifyMaturities(Wizard):
                 amount = line.credit - line.debit
                 if line.amount_second_currency:
                     amount = line.amount_second_currency
-                if invoice.type in ['in_credit_note', 'out_invoice']:
+                if invoice.type == 'out':
                     amount = amount.copy_negate()
                 lines.append({
                         'id': line.id,
@@ -202,7 +202,7 @@ class ModifyMaturities(Wizard):
         processed = set()
         for maturity in self.start.maturities:
             amount = maturity.amount
-            if invoice.type in ['in_credit_note', 'out_invoice']:
+            if invoice.type == 'out':
                 amount = amount.copy_negate()
             new_line = invoice._get_move_line(maturity.date, amount)
             # With the speedup patch this may return a Line instance

@@ -99,6 +99,7 @@ Create party::
 Create product::
 
     >>> ProductUom = Model.get('product.uom')
+    >>> Tax = Model.get('account.tax')
     >>> unit, = ProductUom.find([('name', '=', 'Unit')])
     >>> ProductTemplate = Model.get('product.template')
     >>> Product = Model.get('product.product')
@@ -131,7 +132,7 @@ Create invoice::
 
     >>> Invoice = Model.get('account.invoice')
     >>> invoice = Invoice()
-    >>> invoice.type = 'in_invoice'
+    >>> invoice.type = 'in'
     >>> invoice.party = party
     >>> invoice.invoice_date = today
     >>> invoice.payment_term = payment_term
@@ -171,7 +172,7 @@ Split first maturity into two::
     >>> modify.execute('modify')
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'There is still 55.00 US Dollar to be assigned. Please assignt it to some maturity date', ''))
+    UserError: ('UserError', (u'There is still 55.00 U.S. Dollar to be assigned. Please assignt it to some maturity date', ''))
     >>> new_maturity = modify.form.maturities.new()
     >>> new_maturity.amount
     Decimal('55.00')
@@ -229,13 +230,13 @@ Partialy pay the invoice and check we can not change anymore the maturities::
     >>> modify = Wizard('account.invoice.modify_maturities', [invoice])
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'Can not modify maturities of invoice 1 Party because its line (Main Payable) is reconciled', ''))
+    UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
 
 
 Create a refund and check we can modify it maturities::
 
     >>> credit_note = Invoice()
-    >>> credit_note.type = 'in_credit_note'
+    >>> credit_note.type = 'in'
     >>> credit_note.party = party
     >>> credit_note.invoice_date = today
     >>> credit_note.payment_term = payment_term
@@ -244,34 +245,34 @@ Create a refund and check we can modify it maturities::
     >>> line.quantity = -8
     >>> line.unit_price = Decimal(25)
     >>> credit_note.untaxed_amount
-    Decimal('200.00')
+    Decimal('-200.00')
     >>> credit_note.tax_amount
-    Decimal('20.00')
+    Decimal('-20.00')
     >>> credit_note.total_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> credit_note.click('post')
     >>> modify = Wizard('account.invoice.modify_maturities', [credit_note])
     >>> modify.form.invoice_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> modify.form.lines_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> modify.form.pending_amount
     Decimal('0.00')
     >>> first_maturity, second_maturity = modify.form.maturities
     >>> first_maturity.amount
-    Decimal('110.00')
+    Decimal('-110.00')
     >>> first_maturity.date == today
     True
     >>> second_maturity.amount
-    Decimal('110.00')
+    Decimal('-110.00')
     >>> second_maturity.date == today + relativedelta(days=15)
     True
-    >>> first_maturity.amount = Decimal('55.0')
+    >>> first_maturity.amount = Decimal('-55.0')
     >>> modify.form.pending_amount
-    Decimal('55.00')
+    Decimal('-55.00')
     >>> new_maturity = modify.form.maturities.new()
     >>> new_maturity.amount
-    Decimal('55.00')
+    Decimal('-55.00')
     >>> new_maturity.date = today + relativedelta(days=2)
     >>> modify.execute('modify')
     >>> credit_note.reload()
@@ -294,7 +295,7 @@ Create customer invoice::
 
     >>> Invoice = Model.get('account.invoice')
     >>> invoice = Invoice()
-    >>> invoice.type = 'out_invoice'
+    >>> invoice.type = 'out'
     >>> invoice.party = party
     >>> invoice.invoice_date = today
     >>> invoice.payment_term = payment_term
@@ -353,43 +354,43 @@ Split first maturity into two::
 Create a customer refund and check we can modify it maturities::
 
     >>> credit_note = Invoice()
-    >>> credit_note.type = 'out_credit_note'
+    >>> credit_note.type = 'out'
     >>> credit_note.party = party
     >>> credit_note.invoice_date = today
     >>> credit_note.payment_term = payment_term
     >>> line = credit_note.lines.new()
     >>> line.product = product
-    >>> line.quantity = 8
+    >>> line.quantity = -8
     >>> line.unit_price = Decimal('25.0')
     >>> credit_note.untaxed_amount
-    Decimal('200.00')
+    Decimal('-200.00')
     >>> credit_note.tax_amount
-    Decimal('20.00')
+    Decimal('-20.00')
     >>> credit_note.total_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> credit_note.click('post')
     >>> modify = Wizard('account.invoice.modify_maturities', [credit_note])
     >>> modify.form.invoice_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> modify.form.lines_amount
-    Decimal('220.00')
+    Decimal('-220.00')
     >>> modify.form.pending_amount
     Decimal('0.00')
     >>> first_maturity, second_maturity = modify.form.maturities
     >>> first_maturity.amount
-    Decimal('110.00')
+    Decimal('-110.00')
     >>> first_maturity.date == today
     True
     >>> second_maturity.amount
-    Decimal('110.00')
+    Decimal('-110.00')
     >>> second_maturity.date == today + relativedelta(days=15)
     True
-    >>> first_maturity.amount = Decimal('55.0')
+    >>> first_maturity.amount = Decimal('-55.0')
     >>> modify.form.pending_amount
-    Decimal('55.00')
+    Decimal('-55.00')
     >>> new_maturity = modify.form.maturities.new()
     >>> new_maturity.amount
-    Decimal('55.00')
+    Decimal('-55.00')
     >>> new_maturity.date = today + relativedelta(days=2)
     >>> modify.execute('modify')
     >>> credit_note.reload()
