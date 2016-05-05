@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -15,7 +15,7 @@ msgid ""
 "There is still %(amount)s %(currency)s to be assigned. Please assignt it to "
 "some maturity date"
 msgstr ""
-"Falta %(amount)s %(currency) per assignar. Si us plau, assigneu-lo a algun "
+"Falta %(amount)s %(currency)s per assignar. Si us plau, assigneu-lo a algun "
 "venciment."
 
 msgctxt "field:account.configuration,maturities_on_customer_post:"
