@@ -235,4 +235,6 @@ class ModifyMaturities(Wizard):
         if to_delete:
             Line.delete(to_delete)
         Move.post([invoice.move])
+        invoice.invoice_report_cache = None
+        invoice.save()
         return 'end'
