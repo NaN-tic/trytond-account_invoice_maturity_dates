@@ -9,5 +9,9 @@
         <field name="maturities_on_customer_post"/>
         <label id="maturities_on_supplier_post" string="Supplier Invoices"/>
         <field name="maturities_on_supplier_post"/>
+        <separator id="remove_invoice_report_cache" colspan="4"
+            string="Remove Invoice Report Cache when Modify Maturities"/>
+        <label id="remove_invoice_report_cache"/>
+        <field name="remove_invoice_report_cache"/>
     </xpath>
 </data>

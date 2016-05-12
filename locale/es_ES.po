@@ -26,6 +26,10 @@ msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
 msgstr "Mostrar vencimientos al confirmar factures de proveedor"
 
+msgctxt "field:account.configuration,remove_invoice_report_cache:"
+msgid "Remove Invoice Report Cache"
+msgstr ""
+
 msgctxt "field:account.invoice.maturity_date,amount:"
 msgid "Amount"
 msgstr "Importe"
@@ -97,6 +101,10 @@ msgstr "Factures client"
 msgctxt "view:account.configuration:"
 msgid "Force maturities revision when posting:"
 msgstr "Forzar revisión de los vencimientos al confirmar:"
+
+msgctxt "view:account.configuration:"
+msgid "Remove Invoice Report Cache when Modify Maturities"
+msgstr ""
 
 msgctxt "view:account.configuration:"
 msgid "Supplier Invoices"

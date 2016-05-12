@@ -19,6 +19,7 @@ class Configuration:
         'Customer Invoices Post')
     maturities_on_supplier_post = fields.Boolean('Show Maturities on '
         'Supplier Invoices Post')
+    remove_invoice_report_cache = fields.Boolean('Remove Invoice Report Cache')
 
 
 class Invoice:
@@ -191,6 +192,9 @@ class ModifyMaturities(Wizard):
         Invoice = pool.get('account.invoice')
         Move = pool.get('account.move')
         Line = pool.get('account.move.line')
+        Configuration = pool.get('account.configuration')
+
+        config = Configuration(1)
         if self.start.pending_amount:
             self.raise_user_error('pending_amount', {
                     'amount': str(self.start.pending_amount),
@@ -235,4 +239,7 @@ class ModifyMaturities(Wizard):
         if to_delete:
             Line.delete(to_delete)
         Move.post([invoice.move])
+        if config.remove_invoice_report_cache:
+            invoice.invoice_report_cache = None
+            invoice.save()
         return 'end'
