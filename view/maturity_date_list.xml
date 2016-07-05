@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Invoice Maturity Date" editable="bottom">
+<tree editable="bottom">
     <field name="date"/>
     <field name="amount"/>
     <field name="currency"/>
