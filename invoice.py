@@ -9,11 +9,11 @@ from trytond.pool import Pool, PoolMeta
 
 __all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
     'ModifyMaturitiesStart', 'ModifyMaturities']
-__metaclass__ = PoolMeta
 
 
 class Configuration:
     __name__ = 'account.configuration'
+    __metaclass__ = PoolMeta
 
     maturities_on_customer_post = fields.Boolean('Show Maturities on '
         'Customer Invoices Post')
@@ -23,6 +23,7 @@ class Configuration:
 
 class Invoice:
     __name__ = 'account.invoice'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def __setup__(cls):
