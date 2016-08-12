@@ -14,8 +14,7 @@ class ExceptionChecker(Py23DocChecker):
     def check_output(self, want, got, optionflags):
         if sys.version_info[0] > 2:
             got = re.sub("trytond.exceptions.(.*?)", "\\1", got)
-        return super(ExceptionChecker, self).check_output(
-            want, got, optionflags)
+        return Py23DocChecker.check_output(self, want, got, optionflags)
 doctest_checker = ExceptionChecker()
 
 
