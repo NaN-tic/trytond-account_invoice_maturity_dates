@@ -1,7 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from decimal import Decimal
-from trytond.model import Model, ModelView, fields
+from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateTransition, Button
 from trytond.pyson import Eval
 from trytond.transaction import Transaction
@@ -198,14 +198,13 @@ class ModifyMaturities(Wizard):
     def transition_modify(self):
         pool = Pool()
         Invoice = pool.get('account.invoice')
-        Move = pool.get('account.move')
         Line = pool.get('account.move.line')
         if self.start.pending_amount:
             self.raise_user_error('pending_amount', {
                     'amount': str(self.start.pending_amount),
                     'currency': self.start.currency.rec_name,
                     })
-        to_create, to_write, to_delete = [], [], []
+        to_save, to_delete = [], []
         invoice = Invoice(Transaction().context['active_id'])
         processed = set()
         for maturity in self.start.maturities:
@@ -213,34 +212,18 @@ class ModifyMaturities(Wizard):
             if invoice.type == 'out':
                 amount = amount.copy_negate()
             new_line = invoice._get_move_line(maturity.date, amount)
-            # With the speedup patch this may return a Line instance
-            # XXX: Use instance when patch is commited
-            if isinstance(new_line, Line):
-                new_line = new_line._save_values
             line = maturity.move_line
             if not line:
-                new_line['move'] = invoice.move.id
-                to_create.append(new_line)
-                continue
-            values = {}
-            for field, value in new_line.iteritems():
-                current_value = getattr(line, field)
-                if isinstance(current_value, Model):
-                    current_value = current_value.id
-                if current_value != value:
-                    values[field] = value
+                new_line.move = invoice.move.id
+            elif line.maturity_date != new_line.maturity_date:
+                line.maturity_date = new_line.maturity_date
+            to_save.append(line)
             processed.add(line)
-            if values:
-                to_write.extend(([line], values))
         for line in invoice.move.lines:
             if line.account == invoice.account:
                 if line not in processed:
                     to_delete.append(line)
-        if to_create:
-            Line.create(to_create)
-        if to_write:
-            Line.write(*to_write)
+        Line.save(to_save)
         if to_delete:
             Line.delete(to_delete)
-        Move.post([invoice.move])
         return 'end'
