@@ -58,11 +58,9 @@ class Invoice:
         cls.post(invoices)
         invoice_types = set([i.type for i in invoices])
 
-        if (config.maturities_on_customer_post
-                and set(['out_invoice', 'out_credit_note']) & invoice_types):
+        if (config.maturities_on_customer_post and 'out' in invoice_types):
             return cls.modify_maturities(invoices)
-        if (config.maturities_on_supplier_post
-                and set(['in_invoice', 'in_credit_note']) & invoice_types):
+        if (config.maturities_on_supplier_post and 'in' in invoice_types):
             return cls.modify_maturities(invoices)
 
 
