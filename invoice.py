@@ -64,6 +64,17 @@ class Invoice:
             return cls.modify_maturities(invoices)
 
 
+class MoveLine:
+    __metaclass__ = PoolMeta
+    __name__ = 'account.move.line'
+
+    @classmethod
+    def check_modify(cls, *args, **kwargs):
+        if Transaction().context.get('modify_maturities', False):
+            return
+        return super(MoveLine, cls).check_modify(*args, **kwargs)
+
+
 class InvoiceMaturityDate(ModelView):
     'Invoice Maturity Date'
     __name__ = 'account.invoice.maturity_date'
@@ -90,17 +101,6 @@ class InvoiceMaturityDate(ModelView):
         if self.currency:
             return self.currency.digits
         return 2
-
-
-class MoveLine:
-    __metaclass__ = PoolMeta
-    __name__ = 'account.move.line'
-
-    @classmethod
-    def check_modify(cls, *args, **kwargs):
-        if Transaction().context.get('modify_maturities', False):
-            return
-        return super(MoveLine, cls).check_modify(*args, **kwargs)
 
 
 class ModifyMaturitiesStart(ModelView):
