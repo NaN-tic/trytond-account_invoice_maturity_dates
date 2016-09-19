@@ -97,9 +97,10 @@ class MoveLine:
     __name__ = 'account.move.line'
 
     @classmethod
-    def __setup__(cls):
-        super(MoveLine, cls).__setup__()
-        cls._check_modify_exclude.add('maturity_date')
+    def check_modify(cls, *args, **kwargs):
+        if Transaction().context.get('modify_maturities', False):
+            return
+        return super(MoveLine, cls).check_modify(*args, **kwargs)
 
 
 class ModifyMaturitiesStart(ModelView):
@@ -207,23 +208,29 @@ class ModifyMaturities(Wizard):
         to_save, to_delete = [], []
         invoice = Invoice(Transaction().context['active_id'])
         processed = set()
-        for maturity in self.start.maturities:
-            amount = maturity.amount
-            if invoice.type == 'out':
-                amount = amount.copy_negate()
-            new_line = invoice._get_move_line(maturity.date, amount)
-            line = maturity.move_line
-            if not line:
-                new_line.move = invoice.move.id
-            elif line.maturity_date != new_line.maturity_date:
-                line.maturity_date = new_line.maturity_date
-            to_save.append(line)
-            processed.add(line)
-        for line in invoice.move.lines:
-            if line.account == invoice.account:
-                if line not in processed:
-                    to_delete.append(line)
-        Line.save(to_save)
-        if to_delete:
-            Line.delete(to_delete)
+        with Transaction().set_context(modify_maturities=True):
+            for maturity in self.start.maturities:
+                amount = maturity.amount
+                if invoice.type == 'out':
+                    amount = amount.copy_negate()
+                new_line = invoice._get_move_line(maturity.date, amount)
+                if not maturity.move_line:
+                    new_line.move = invoice.move.id
+                    line = new_line
+                else:
+                    line, = Line.browse([maturity.move_line])
+                    for fname in ('maturity_date', 'credit', 'debit'):
+                        value = getattr(line, fname)
+                        new_value = getattr(new_line, fname)
+                        if value != new_value:
+                            setattr(line, fname, getattr(new_line, fname))
+                to_save.append(line)
+                processed.add(line)
+            for line in Line.browse(invoice.move.lines):
+                if line.account == invoice.account:
+                    if line not in processed:
+                        to_delete.append(line)
+            Line.save(to_save)
+            if to_delete:
+                Line.delete(to_delete)
         return 'end'
