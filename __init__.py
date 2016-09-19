@@ -8,6 +8,7 @@ def register():
     Pool.register(
         Configuration,
         Invoice,
+        MoveLine,
         InvoiceMaturityDate,
         ModifyMaturitiesStart,
         module='account_invoice_maturity_dates', type_='model')

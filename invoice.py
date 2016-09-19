@@ -7,7 +7,7 @@ from trytond.pyson import Eval
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 
-__all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
+__all__ = ['Configuration', 'Invoice', 'MoveLine', 'InvoiceMaturityDate',
     'ModifyMaturitiesStart', 'ModifyMaturities']
 
 
@@ -90,6 +90,16 @@ class InvoiceMaturityDate(ModelView):
         if self.currency:
             return self.currency.digits
         return 2
+
+
+class MoveLine:
+    __metaclass__ = PoolMeta
+    __name__ = 'account.move.line'
+
+    @classmethod
+    def __setup__(cls):
+        super(MoveLine, cls).__setup__()
+        cls._check_modify_exclude.add('maturity_date')
 
 
 class ModifyMaturitiesStart(ModelView):
@@ -197,7 +207,6 @@ class ModifyMaturities(Wizard):
                     })
         to_create, to_write, to_delete = [], [], []
         invoice = Invoice(Transaction().context['active_id'])
-        Move.draft([invoice.move])
         processed = set()
         for maturity in self.start.maturities:
             amount = maturity.amount

@@ -64,11 +64,7 @@ Allow to cancel moves on expense and revenue jounral::
 
     >>> Journal = Model.get('account.journal')
     >>> expense_journal, = Journal.find([('type', '=', 'expense')])
-    >>> expense_journal.update_posted = True
-    >>> expense_journal.save()
     >>> revenue_journal, = Journal.find([('type', '=', 'revenue')])
-    >>> revenue_journal.update_posted = True
-    >>> revenue_journal.save()
 
 Configure cash journal::
 
