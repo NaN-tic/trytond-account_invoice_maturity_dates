@@ -1,4 +1,4 @@
-#
+# 
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -7,7 +7,7 @@ msgid ""
 "Can not modify maturities of invoice %(invoice)s because its line %(line)s "
 "is reconciled"
 msgstr ""
-"No se puede modificar los vencimientos de la factura %(invoice)s porqué su "
+"No se puede modificar los vencimientos de la factura %(invoice)s porque su "
 "apunte %(line)s esta conciliado. "
 
 msgctxt "error:account.invoice.modify_maturities:"
@@ -20,11 +20,11 @@ msgstr ""
 
 msgctxt "field:account.configuration,maturities_on_customer_post:"
 msgid "Show Maturities on Customer Invoices Post"
-msgstr "Mostrar vencimientos al confirmar factures de cliente"
+msgstr "Mostrar vencimientos al confirmar facturas de cliente"
 
 msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
-msgstr "Mostrar vencimientos al confirmar factures de proveedor"
+msgstr "Mostrar vencimientos al confirmar facturas de proveedor"
 
 msgctxt "field:account.invoice.maturity_date,amount:"
 msgid "Amount"
@@ -36,7 +36,7 @@ msgstr "Moneda"
 
 msgctxt "field:account.invoice.maturity_date,currency_digits:"
 msgid "Currency Digits"
-msgstr "Decimals de la moneda"
+msgstr "Decimales de la moneda"
 
 msgctxt "field:account.invoice.maturity_date,date:"
 msgid "Date"
@@ -56,7 +56,7 @@ msgstr "Moneda"
 
 msgctxt "field:account.invoice.modify_maturities.start,currency_digits:"
 msgid "Currency Digits"
-msgstr "Decimals de la moneda"
+msgstr "Decimales de la moneda"
 
 msgctxt "field:account.invoice.modify_maturities.start,id:"
 msgid "ID"
@@ -92,7 +92,7 @@ msgstr "Modificar vencimientos"
 
 msgctxt "view:account.configuration:"
 msgid "Customer Invoices"
-msgstr "Factures client"
+msgstr "Facturas de cliente"
 
 msgctxt "view:account.configuration:"
 msgid "Force maturities revision when posting:"
@@ -120,7 +120,7 @@ msgstr "Confirmar"
 
 msgctxt "wizard_button:account.invoice.modify_maturities,start,end:"
 msgid "Cancel"
-msgstr "Cancel·lar"
+msgstr "Cancelar"
 
 msgctxt "wizard_button:account.invoice.modify_maturities,start,modify:"
 msgid "Ok"
