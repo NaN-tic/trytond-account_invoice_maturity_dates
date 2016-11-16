@@ -44,7 +44,7 @@ msgstr "Data"
 
 msgctxt "field:account.invoice.maturity_date,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:account.invoice.maturity_date,move_line:"
 msgid "Move Line"
@@ -60,7 +60,7 @@ msgstr "Dígits de la moneda"
 
 msgctxt "field:account.invoice.modify_maturities.start,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:account.invoice.modify_maturities.start,invoice_amount:"
 msgid "Invoice Amount"
