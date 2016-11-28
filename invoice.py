@@ -142,6 +142,8 @@ class ModifyMaturitiesStart(ModelView):
 
     @fields.depends('invoice_amount', 'maturities')
     def on_change_with_pending_amount(self, name=None):
+        if not self.invoice_amount:
+            return None
         lines_amount = self.on_change_with_lines_amount()
         return self.invoice_amount - lines_amount
 
