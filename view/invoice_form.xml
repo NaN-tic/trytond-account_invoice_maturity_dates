@@ -10,8 +10,4 @@
             position="after">
         <button name="post_and_modify_maturities" string="Post"/>
     </xpath>
-    <xpath expr="/form/notebook/page[@id='invoice']/group/group/group[@id='buttons']"
-            position="replace_attributes">
-        <group id="buttons" col="12"/>
-    </xpath>
 </data>
