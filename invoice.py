@@ -232,7 +232,7 @@ class ModifyMaturities(Wizard):
                             })
                 amount = line.credit - line.debit
                 if line.amount_second_currency:
-                    amount = line.amount_second_currency
+                    amount = line.amount_second_currency * -1
                 if invoice.type in ['in_credit_note', 'out_invoice']:
                     amount = amount.copy_negate()
                 lines.append({
