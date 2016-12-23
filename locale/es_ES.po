@@ -66,9 +66,17 @@ msgctxt "field:account.invoice.modify_maturities.start,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:account.invoice.modify_maturities.start,invoice:"
+msgid "Invoice"
+msgstr "Factura"
+
 msgctxt "field:account.invoice.modify_maturities.start,invoice_amount:"
 msgid "Invoice Amount"
 msgstr "Importe factura"
+
+msgctxt "field:account.invoice.modify_maturities.start,invoices:"
+msgid "Invoices"
+msgstr "Facturas"
 
 msgctxt "field:account.invoice.modify_maturities.start,lines_amount:"
 msgid "Assigned Amount"
@@ -91,8 +99,8 @@ msgid "Modify Maturities Start"
 msgstr "Inicio modificar vencimientos"
 
 msgctxt "model:ir.action,name:wizard_modify_maturities"
-msgid "Modify Maturities"
-msgstr "Modificar vencimientos"
+msgid "Post/Modify Maturities"
+msgstr "Confirmar/Modificar vencimientos"
 
 msgctxt "view:account.configuration:"
 msgid "Customer Invoices"
@@ -101,10 +109,6 @@ msgstr "Factures client"
 msgctxt "view:account.configuration:"
 msgid "Force maturities revision when posting:"
 msgstr "Forzar revisión de los vencimientos al confirmar:"
-
-msgctxt "view:account.configuration:"
-msgid "Remove Invoice Report Cache when Modify Maturities"
-msgstr ""
 
 msgctxt "view:account.configuration:"
 msgid "Supplier Invoices"
@@ -126,10 +130,10 @@ msgctxt "view:account.invoice:"
 msgid "Post"
 msgstr "Confirmar"
 
-msgctxt "wizard_button:account.invoice.modify_maturities,start,end:"
+msgctxt "wizard_button:account.invoice.modify_maturities,ask,end:"
 msgid "Cancel"
-msgstr "Cancel·lar"
+msgstr "Cancelar"
 
-msgctxt "wizard_button:account.invoice.modify_maturities,start,modify:"
+msgctxt "wizard_button:account.invoice.modify_maturities,ask,modify:"
 msgid "Ok"
 msgstr "Aceptar"

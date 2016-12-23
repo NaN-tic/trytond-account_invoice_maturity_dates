@@ -52,8 +52,8 @@ class Invoice:
     @classmethod
     @ModelView.button
     def post_and_modify_maturities(cls, invoices):
-        pool = Pool()
-        Configuration = pool.get('account.configuration')
+        Configuration = Pool().get('account.configuration')
+
         config = Configuration(1)
         cls.post(invoices)
         invoice_types = set([i.type for i in invoices])
@@ -64,6 +64,58 @@ class Invoice:
         if (config.maturities_on_supplier_post
                 and set(['in_invoice', 'in_credit_note']) & invoice_types):
             return cls.modify_maturities(invoices)
+
+    def set_maturities(self, maturity_dates):
+        pool = Pool()
+        Move = pool.get('account.move')
+        Line = pool.get('account.move.line')
+
+        if not self.move:
+            return
+
+        to_create, to_write, to_delete = [], [], []
+
+        Move.draft([self.move])
+
+        processed = set()
+        for maturity in maturity_dates:
+            amount = maturity.amount
+            if self.type in ['in_credit_note', 'out_invoice']:
+                amount = amount.copy_negate()
+            new_line = self._get_move_line(maturity.date, amount)
+            # With the speedup patch this may return a Line instance
+            # XXX: Use instance when patch is commited
+            if isinstance(new_line, Line):
+                new_line = new_line._save_values
+            line = maturity.move_line
+            if not line:
+                new_line['move'] = self.move.id
+                to_create.append(new_line)
+                continue
+            values = {}
+            for field, value in new_line.iteritems():
+                current_value = getattr(line, field)
+                if isinstance(current_value, Model):
+                    current_value = current_value.id
+                if current_value != value:
+                    values[field] = value
+            processed.add(line)
+            if values:
+                to_write.extend(([line], values))
+
+        for line in self.move.lines:
+            if line.account == self.account:
+                if line not in processed:
+                    to_delete.append(line)
+
+        if to_create:
+            Line.create(to_create)
+        if to_write:
+            Line.write(*to_write)
+        if to_delete:
+            Line.delete(to_delete)
+
+        Move.post([self.move])
 
 
 class InvoiceMaturityDate(ModelView):
@@ -97,7 +149,8 @@ class InvoiceMaturityDate(ModelView):
 class ModifyMaturitiesStart(ModelView):
     'Modify Maturities Start'
     __name__ = 'account.invoice.modify_maturities.start'
-
+    invoices = fields.One2Many('account.invoice', None, 'Invoices', readonly=True)
+    invoice = fields.Many2One('account.invoice', 'Invoice', readonly=True)
     invoice_amount = fields.Numeric('Invoice Amount',
         digits=(16, Eval('currency_digits', 2)),
         depends=['currency_digits'], required=True, readonly=True)
@@ -140,7 +193,9 @@ class ModifyMaturitiesStart(ModelView):
 class ModifyMaturities(Wizard):
     'Modify Maturities'
     __name__ = 'account.invoice.modify_maturities'
-    start = StateView('account.invoice.modify_maturities.start',
+    start_state = 'next_'
+    next_ = StateTransition()
+    ask = StateView('account.invoice.modify_maturities.start',
         'account_invoice_maturity_dates.modify_start_view_form', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Ok', 'modify', 'tryton-ok', default=True),
@@ -157,17 +212,20 @@ class ModifyMaturities(Wizard):
                     'be assigned. Please assignt it to some maturity date'),
                 })
 
-    def default_start(self, fields):
-        Invoice = Pool().get('account.invoice')
-        default = {}
-        invoice = Invoice(Transaction().context['active_id'])
-        default['currency'] = invoice.currency.id
-        default['currency_digits'] = invoice.currency.digits
-        default['invoice_amount'] = invoice.total_amount
+    def default_ask(self, fields):
+        invoice = self.ask.invoice
+
+        defaults = {}
+        defaults['invoices'] = [i.id for i in self.ask.invoices]
+        defaults['invoice'] = invoice.id
+        defaults['currency'] = invoice.currency.id
+        defaults['currency_digits'] = invoice.currency.digits
+        defaults['invoice_amount'] = invoice.total_amount
         lines = []
         for line in invoice.move.lines:
             if line.account == invoice.account:
                 if line.reconciliation:
+                    # TODO remove raise user error or continue
                     self.raise_user_error('already_reconciled', {
                             'invoice': invoice.rec_name,
                             'line': line.rec_name,
@@ -184,62 +242,68 @@ class ModifyMaturities(Wizard):
                         'date': line.maturity_date,
                         'currency': invoice.currency.id
                         })
-                default['maturities'] = sorted(lines, key=lambda a: a['date'])
-        return default
+                defaults['maturities'] = sorted(lines, key=lambda a: a['date'])
+        return defaults
 
-    def transition_modify(self):
+    def transition_next_(self):
         pool = Pool()
-        Invoice = pool.get('account.invoice')
-        Move = pool.get('account.move')
-        Line = pool.get('account.move.line')
         Configuration = pool.get('account.configuration')
+        Invoice = pool.get('account.invoice')
 
         config = Configuration(1)
-        if self.start.pending_amount:
+
+        invoices = Invoice.browse(Transaction().context['active_ids'])
+        invoice_types = set([i.type for i in invoices])
+
+        if (not config.maturities_on_customer_post
+                and (('out_invoice' or 'out_credit_note') in invoice_types)):
+            Invoice.post(
+                [i for i in invoices if i.state not in ['cancel', 'paid']])
+            return 'end'
+        if (not config.maturities_on_supplier_post
+                and (('in_invoice' or 'in_credit_note') in invoice_types)):
+            Invoice.post(
+                [i for i in invoices if i.state not in ['cancel', 'paid']])
+            return 'end'
+
+        to_post = [i for i in invoices \
+            if i.state not in ['cancel', 'paid', 'posted']]
+        if to_post:
+            Invoice.post(to_post)
+
+        def next_invoice():
+            invoices = list(self.ask.invoices)
+            if not invoices:
+                return
+            invoice = invoices.pop()
+            self.ask.invoice = invoice
+            self.ask.invoices = invoices
+            return invoice
+
+        if getattr(self.ask, 'invoices', None) is None:
+            self.ask.invoices = [i.id for i in invoices \
+                if i.state not in ['cancel', 'paid']]
+
+        while not next_invoice():
+            return 'end'
+        return 'ask'
+
+    def transition_modify(self):
+        Configuration = Pool().get('account.configuration')
+
+        config = Configuration(1)
+        invoice = self.ask.invoice
+
+        if self.ask.pending_amount:
+            # TODO remove raise user error
             self.raise_user_error('pending_amount', {
-                    'amount': str(self.start.pending_amount),
-                    'currency': self.start.currency.rec_name,
+                    'amount': str(self.ask.pending_amount),
+                    'currency': self.ask.currency.rec_name,
                     })
-        to_create, to_write, to_delete = [], [], []
-        invoice = Invoice(Transaction().context['active_id'])
-        Move.draft([invoice.move])
-        processed = set()
-        for maturity in self.start.maturities:
-            amount = maturity.amount
-            if invoice.type in ['in_credit_note', 'out_invoice']:
-                amount = amount.copy_negate()
-            new_line = invoice._get_move_line(maturity.date, amount)
-            # With the speedup patch this may return a Line instance
-            # XXX: Use instance when patch is commited
-            if isinstance(new_line, Line):
-                new_line = new_line._save_values
-            line = maturity.move_line
-            if not line:
-                new_line['move'] = invoice.move.id
-                to_create.append(new_line)
-                continue
-            values = {}
-            for field, value in new_line.iteritems():
-                current_value = getattr(line, field)
-                if isinstance(current_value, Model):
-                    current_value = current_value.id
-                if current_value != value:
-                    values[field] = value
-            processed.add(line)
-            if values:
-                to_write.extend(([line], values))
-        for line in invoice.move.lines:
-            if line.account == invoice.account:
-                if line not in processed:
-                    to_delete.append(line)
-        if to_create:
-            Line.create(to_create)
-        if to_write:
-            Line.write(*to_write)
-        if to_delete:
-            Line.delete(to_delete)
-        Move.post([invoice.move])
+
+        invoice.set_maturities(self.ask.maturities)
+
         if config.remove_invoice_report_cache:
             invoice.invoice_report_cache = None
             invoice.save()
-        return 'end'
+        return 'next_'
