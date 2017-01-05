@@ -23,16 +23,21 @@
             <field name="name">Post/Modify Maturities</field>
             <field name="wiz_name">account.invoice.modify_maturities</field>
         </record>
-        <record model="ir.action.keyword" id="modify_maturities_keyword">
+        <!-- <record model="ir.action.keyword" id="modify_maturities_keyword">
             <field name="keyword">form_action</field>
             <field name="model">account.invoice,-1</field>
             <field name="action" ref="wizard_modify_maturities"/>
-        </record>
+        </record> -->
 
         <record model="ir.ui.view" id="invoice_view_form">
             <field name="model">account.invoice</field>
             <field name="inherit" ref="account_invoice.invoice_view_form"/>
             <field name="name">invoice_form</field>
+        </record>
+        <record model="ir.ui.view" id="invoice_view_tree">
+            <field name="model">account.invoice</field>
+            <field name="inherit" ref="account_invoice.invoice_view_tree"/>
+            <field name="name">invoice_tree</field>
         </record>
 
         <record model="ir.ui.view" id="configuration_view_form">
