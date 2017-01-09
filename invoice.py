@@ -121,6 +121,8 @@ class Invoice:
 class InvoiceMaturityDate(ModelView):
     'Invoice Maturity Date'
     __name__ = 'account.invoice.maturity_date'
+    invoice = fields.Many2One('account.invoice', 'Invoice',
+        readonly=True)
     move_line = fields.Many2One('account.move.line', 'Move Line',
         readonly=True)
     date = fields.Date('Date', required=True)
@@ -175,24 +177,29 @@ class InvoiceMaturityDate(ModelView):
             return self.second_currency.digits
         return 2
 
-    @fields.depends('amount', 'amount_second_currency',
-        'currency', 'second_currency')
+    @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
+        'second_currency')
     def on_change_amount(self):
         Currency = Pool().get('currency.currency')
+
         res = {}
         if self.amount and self.second_currency:
-            res['amount_second_currency'] = abs(Currency.compute(
-                self.currency, self.amount, self.second_currency))
+            with Transaction().set_context(date=self.invoice.currency_date):
+                res['amount_second_currency'] = abs(Currency.compute(
+                    self.currency, self.amount, self.second_currency))
         return res
 
-    @fields.depends('amount', 'amount_second_currency',
-        'currency', 'second_currency')
+    @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
+        'second_currency')
     def on_change_amount_second_currency(self):
         Currency = Pool().get('currency.currency')
+
         res = {}
         if self.amount_second_currency and self.second_currency:
-            res['amount'] = abs(Currency.compute(
-                self.second_currency, self.amount_second_currency, self.currency))
+            with Transaction().set_context(date=self.invoice.currency_date):
+                res['amount'] = abs(Currency.compute(
+                    self.second_currency, self.amount_second_currency,
+                    self.currency))
         return res
 
 
@@ -245,6 +252,7 @@ class ModifyMaturitiesStart(ModelView):
         'on_change_with_pending_amount_second_currency')
     maturities = fields.One2Many('account.invoice.maturity_date', None,
         'Maturities', context={
+            'invoice': Eval('invoice'),
             'currency': Eval('currency'),
             'second_currency': Eval('second_currency', None),
             'amount': Eval('pending_amount'),
@@ -320,8 +328,10 @@ class ModifyMaturities(Wizard):
         defaults['currency'] = invoice.company.currency.id
         defaults['currency_digits'] = invoice.company.currency.digits
         if invoice.company.currency.id != invoice.currency.id:
-            total_amount = Currency.compute(
-                invoice.currency, invoice.total_amount, invoice.company.currency)
+            with Transaction().set_context(date=invoice.currency_date):
+                total_amount = Currency.compute(
+                    invoice.currency, invoice.total_amount,
+                    invoice.company.currency)
             defaults['second_currency'] = invoice.currency.id
             defaults['second_currency_digits'] = invoice.currency.digits
             defaults['invoice_amount_second_currency'] = invoice.total_amount
@@ -350,6 +360,7 @@ class ModifyMaturities(Wizard):
                     amount = amount.copy_negate()
                 lines.append({
                         'id': line.id,
+                        'invoice': invoice.id,
                         'move_line': line.id,
                         'date': line.maturity_date,
                         'amount': amount,
