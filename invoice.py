@@ -149,6 +149,10 @@ class InvoiceMaturityDate(ModelView):
         'on_change_with_second_currency_digits')
 
     @staticmethod
+    def default_invoice():
+        return Transaction().context.get('invoice')
+
+    @staticmethod
     def default_currency():
         return Transaction().context.get('currency')
 
