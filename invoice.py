@@ -377,30 +377,9 @@ class ModifyMaturities(Wizard):
         return defaults
 
     def transition_next_(self):
-        pool = Pool()
-        Configuration = pool.get('account.configuration')
-        Invoice = pool.get('account.invoice')
-
-        config = Configuration(1)
+        Invoice = Pool().get('account.invoice')
 
         invoices = Invoice.browse(Transaction().context['active_ids'])
-        invoice_types = set([i.type for i in invoices])
-
-        if (not config.maturities_on_customer_post
-                and (('out_invoice' or 'out_credit_note') in invoice_types)):
-            Invoice.post(
-                [i for i in invoices if i.state not in ['cancel', 'paid']])
-            return 'end'
-        if (not config.maturities_on_supplier_post
-                and (('in_invoice' or 'in_credit_note') in invoice_types)):
-            Invoice.post(
-                [i for i in invoices if i.state not in ['cancel', 'paid']])
-            return 'end'
-
-        to_post = [i for i in invoices \
-            if i.state not in ['cancel', 'paid', 'posted']]
-        if to_post:
-            Invoice.post(to_post)
 
         def next_invoice():
             invoices = list(self.ask.invoices)
