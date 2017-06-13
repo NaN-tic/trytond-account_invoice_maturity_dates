@@ -2,7 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/group[@id='tax_roundings']" position="after">
+    <xpath expr="/form" position="inside">
         <separator id="maturities_on_post" colspan="4"
             string="Force maturities revision when posting:"/>
         <label id="maturities_on_customer_post" string="Customer Invoices"/>

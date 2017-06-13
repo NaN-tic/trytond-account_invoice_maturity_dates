@@ -9,10 +9,11 @@ from trytond.pool import Pool, PoolMeta
 
 __all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
     'ModifyMaturitiesStart', 'ModifyMaturities']
-__metaclass__ = PoolMeta
+ZERO = Decimal('0.0')
 
 
 class Configuration:
+    __metaclass__ = PoolMeta
     __name__ = 'account.configuration'
 
     maturities_on_customer_post = fields.Boolean('Show Maturities on '
@@ -23,6 +24,7 @@ class Configuration:
 
 
 class Invoice:
+    __metaclass__ = PoolMeta
     __name__ = 'account.invoice'
 
     @classmethod
@@ -58,11 +60,9 @@ class Invoice:
         cls.post(invoices)
         invoice_types = set([i.type for i in invoices])
 
-        if (config.maturities_on_customer_post
-                and set(['out_invoice', 'out_credit_note']) & invoice_types):
+        if (config.maturities_on_customer_post and 'out' in invoice_types):
             return cls.modify_maturities(invoices)
-        if (config.maturities_on_supplier_post
-                and set(['in_invoice', 'in_credit_note']) & invoice_types):
+        if (config.maturities_on_supplier_post and 'in' in invoice_types):
             return cls.modify_maturities(invoices)
 
     def set_maturities(self, maturity_dates):
@@ -80,7 +80,7 @@ class Invoice:
         processed = set()
         for maturity in maturity_dates:
             amount = maturity.amount
-            if self.type in ['in_credit_note', 'out_invoice']:
+            if self.type == 'out':
                 amount = amount.copy_negate()
             new_line = self._get_move_line(maturity.date, amount)
             # With the speedup patch this may return a Line instance
@@ -121,6 +121,8 @@ class Invoice:
 class InvoiceMaturityDate(ModelView):
     'Invoice Maturity Date'
     __name__ = 'account.invoice.maturity_date'
+    invoice = fields.Many2One('account.invoice', 'Invoice',
+        readonly=True)
     move_line = fields.Many2One('account.move.line', 'Move Line',
         readonly=True)
     date = fields.Date('Date', required=True)
@@ -145,6 +147,10 @@ class InvoiceMaturityDate(ModelView):
                 'invisible': ~Bool(Eval('second_currency', None)),
             }, depends=['second_currency']),
         'on_change_with_second_currency_digits')
+
+    @staticmethod
+    def default_invoice():
+        return Transaction().context.get('invoice')
 
     @staticmethod
     def default_currency():
@@ -175,31 +181,32 @@ class InvoiceMaturityDate(ModelView):
             return self.second_currency.digits
         return 2
 
-    @fields.depends('amount', 'amount_second_currency',
-        'currency', 'second_currency')
+    @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
+        'second_currency')
     def on_change_amount(self):
         Currency = Pool().get('currency.currency')
-        res = {}
-        if self.amount and self.second_currency:
-            res['amount_second_currency'] = abs(Currency.compute(
-                self.currency, self.amount, self.second_currency))
-        return res
 
-    @fields.depends('amount', 'amount_second_currency',
-        'currency', 'second_currency')
+        if self.amount and self.second_currency:
+            with Transaction().set_context(date=self.invoice.currency_date):
+                self.amount_second_currency = abs(Currency.compute(
+                    self.currency, self.amount, self.second_currency))
+
+    @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
+        'second_currency')
     def on_change_amount_second_currency(self):
         Currency = Pool().get('currency.currency')
-        res = {}
+
         if self.amount_second_currency and self.second_currency:
-            res['amount'] = abs(Currency.compute(
-                self.second_currency, self.amount_second_currency, self.currency))
-        return res
+            with Transaction().set_context(date=self.invoice.currency_date):
+                self.amount = abs(Currency.compute(
+                    self.second_currency, self.amount_second_currency,
+                    self.currency))
 
 
 class ModifyMaturitiesStart(ModelView):
     'Modify Maturities Start'
     __name__ = 'account.invoice.modify_maturities.start'
-    invoices = fields.One2Many('account.invoice', None, 'Invoices', readonly=True)
+    invoices = fields.Many2Many('account.invoice', None, None, 'Invoices', readonly=True)
     invoice = fields.Many2One('account.invoice', 'Invoice', readonly=True)
     invoice_amount = fields.Numeric('Invoice Amount',
         digits=(16, Eval('currency_digits', 2)),
@@ -245,6 +252,7 @@ class ModifyMaturitiesStart(ModelView):
         'on_change_with_pending_amount_second_currency')
     maturities = fields.One2Many('account.invoice.maturity_date', None,
         'Maturities', context={
+            'invoice': Eval('invoice'),
             'currency': Eval('currency'),
             'second_currency': Eval('second_currency', None),
             'amount': Eval('pending_amount'),
@@ -320,8 +328,10 @@ class ModifyMaturities(Wizard):
         defaults['currency'] = invoice.company.currency.id
         defaults['currency_digits'] = invoice.company.currency.digits
         if invoice.company.currency.id != invoice.currency.id:
-            total_amount = Currency.compute(
-                invoice.currency, invoice.total_amount, invoice.company.currency)
+            with Transaction().set_context(date=invoice.currency_date):
+                total_amount = Currency.compute(
+                    invoice.currency, invoice.total_amount,
+                    invoice.company.currency)
             defaults['second_currency'] = invoice.currency.id
             defaults['second_currency_digits'] = invoice.currency.digits
             defaults['invoice_amount_second_currency'] = invoice.total_amount
@@ -346,10 +356,11 @@ class ModifyMaturities(Wizard):
                     second_currency = line.second_currency
 
                 amount = line.credit - line.debit
-                if invoice.type in ['in_credit_note', 'out_invoice']:
+                if invoice.type == 'out':
                     amount = amount.copy_negate()
                 lines.append({
                         'id': line.id,
+                        'invoice': invoice.id,
                         'move_line': line.id,
                         'date': line.maturity_date,
                         'amount': amount,
@@ -362,30 +373,9 @@ class ModifyMaturities(Wizard):
         return defaults
 
     def transition_next_(self):
-        pool = Pool()
-        Configuration = pool.get('account.configuration')
-        Invoice = pool.get('account.invoice')
-
-        config = Configuration(1)
+        Invoice = Pool().get('account.invoice')
 
         invoices = Invoice.browse(Transaction().context['active_ids'])
-        invoice_types = set([i.type for i in invoices])
-
-        if (not config.maturities_on_customer_post
-                and (('out_invoice' or 'out_credit_note') in invoice_types)):
-            Invoice.post(
-                [i for i in invoices if i.state not in ['cancel', 'paid']])
-            return 'end'
-        if (not config.maturities_on_supplier_post
-                and (('in_invoice' or 'in_credit_note') in invoice_types)):
-            Invoice.post(
-                [i for i in invoices if i.state not in ['cancel', 'paid']])
-            return 'end'
-
-        to_post = [i for i in invoices \
-            if i.state not in ['cancel', 'paid', 'posted']]
-        if to_post:
-            Invoice.post(to_post)
 
         def next_invoice():
             invoices = list(self.ask.invoices)
@@ -393,12 +383,12 @@ class ModifyMaturities(Wizard):
                 return
             invoice = invoices.pop()
             self.ask.invoice = invoice
-            self.ask.invoices = invoices
+            self.ask.invoices = [i.id for i in invoices]
             return invoice
 
         if getattr(self.ask, 'invoices', None) is None:
             self.ask.invoices = [i.id for i in invoices \
-                if i.state not in ['cancel', 'paid'] and i.total_amount > 0]
+                if i.state not in ['cancel', 'paid']]
 
         while not next_invoice():
             return 'end'
