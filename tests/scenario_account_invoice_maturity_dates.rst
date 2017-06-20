@@ -221,7 +221,6 @@ Partialy pay the invoice and check we can not change anymore the maturities::
         ...
     UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
 
-
 Create a refund and check we can modify it maturities::
 
     >>> credit_note = Invoice()

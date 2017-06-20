@@ -2,12 +2,14 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/field[@name='tax_roundings']" position="after">
+    <xpath expr="/form" position="inside">
         <separator id="maturities_on_post" colspan="4"
             string="Force maturities revision when posting:"/>
         <label id="maturities_on_customer_post" string="Customer Invoices"/>
         <field name="maturities_on_customer_post"/>
         <label id="maturities_on_supplier_post" string="Supplier Invoices"/>
         <field name="maturities_on_supplier_post"/>
+        <label name="remove_invoice_report_cache"/>
+        <field name="remove_invoice_report_cache"/>
     </xpath>
 </data>

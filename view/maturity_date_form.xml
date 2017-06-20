@@ -8,6 +8,10 @@
     <field name="amount"/>
     <label name="currency"/>
     <field name="currency"/>
+    <label name="amount_second_currency"/>
+    <field name="amount_second_currency"/>
+    <label name="second_currency"/>
+    <field name="second_currency"/>
     <label name="move_line"/>
     <field name="move_line"/>
 </form>

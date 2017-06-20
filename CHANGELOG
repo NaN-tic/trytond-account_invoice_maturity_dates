@@ -1,3 +1,4 @@
-Version 4.2.0 - 2016-11-30
-* Bug fixes (see mercurial logs for details)
-* Initial release
+* Maturity Dates with second currency
+* Allow Maturity Dates Wizard with active_ids
+
+Version 3.4.0 - 2015-12-02
