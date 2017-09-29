@@ -54,7 +54,7 @@ setup(
     version=version,
     description='',
     long_description=read('README'),
-    author='NaN·tic',
+    author='NaN-tic',
     author_email='info@nan-tic.com',
     url='http://www.nan-tic.com/',
     download_url="https://bitbucket.org/nantic/trytond-%s" % MODULE,
