@@ -10,7 +10,9 @@ try:
 except ImportError:
     from ConfigParser import ConfigParser
 
-MODULE2PREFIX = {}
+MODULE2PREFIX = {
+    'account_move_draft': 'trytonspain',
+}
 
 
 def read(fname):
