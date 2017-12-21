@@ -92,20 +92,19 @@ Create product::
     >>> unit, = ProductUom.find([('name', '=', 'Unit')])
     >>> ProductTemplate = Model.get('product.template')
     >>> Product = Model.get('product.product')
-    >>> product = Product()
     >>> template = ProductTemplate()
     >>> template.name = 'product'
     >>> template.default_uom = unit
     >>> template.type = 'service'
     >>> template.list_price = Decimal('40')
-    >>> template.cost_price = Decimal('25')
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.supplier_taxes.append(tax)
     >>> template.customer_taxes.append(Tax(tax.id))
+    >>> product, = template.products
+    >>> product.cost_price = Decimal('5')
     >>> template.save()
-    >>> product.template = template
-    >>> product.save()
+    >>> product, = template.products
 
 Create payment term::
 
@@ -158,7 +157,7 @@ Split first maturity into two::
     >>> first_maturity.amount = Decimal('55.0')
     >>> modify.form.pending_amount
     Decimal('55.00')
-    >>> modify.execute('modify')
+    >>> modify.execute('modify')  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'There is still 55.00 U.S. Dollar to be assigned. Please assignt it to some maturity date', ''))
@@ -216,7 +215,7 @@ Partialy pay the invoice and check we can not change anymore the maturities::
     >>> invoice.reload()
     >>> invoice.amount_to_pay
     Decimal('110.00')
-    >>> modify = Wizard('account.invoice.modify_maturities', [invoice])
+    >>> modify = Wizard('account.invoice.modify_maturities', [invoice])  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
