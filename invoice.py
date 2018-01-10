@@ -206,7 +206,8 @@ class InvoiceMaturityDate(ModelView):
 class ModifyMaturitiesStart(ModelView):
     'Modify Maturities Start'
     __name__ = 'account.invoice.modify_maturities.start'
-    invoices = fields.Many2Many('account.invoice', None, None, 'Invoices', readonly=True)
+    invoices = fields.Many2Many(
+        'account.invoice', None, None, 'Invoices', readonly=True)
     invoice = fields.Many2One('account.invoice', 'Invoice', readonly=True)
     invoice_amount = fields.Numeric('Invoice Amount',
         digits=(16, Eval('currency_digits', 2)),
@@ -216,7 +217,9 @@ class ModifyMaturitiesStart(ModelView):
         digits=(16, Eval('second_currency_digits', 2)),
         states={
             'invisible': ~Bool(Eval('second_currency')),
-        }, depends=['second_currency_digits', 'second_currency'], readonly=True)
+        },
+        depends=['second_currency_digits', 'second_currency'],
+        readonly=True)
     currency = fields.Many2One('currency.currency', 'Currency', required=True,
         readonly=True)
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
@@ -256,7 +259,8 @@ class ModifyMaturitiesStart(ModelView):
             'currency': Eval('currency'),
             'second_currency': Eval('second_currency', None),
             'amount': Eval('pending_amount'),
-            'amount_second_currency': Eval('pending_amount_second_currency', None),
+            'amount_second_currency': (
+                Eval('pending_amount_second_currency', None)),
             },
         depends=['currency', 'pending_amount'])
 
@@ -286,7 +290,8 @@ class ModifyMaturitiesStart(ModelView):
     @fields.depends('maturities')
     def on_change_with_lines_amount_second_currency(self, name=None):
         _ZERO = Decimal('0.0')
-        return sum((l.amount_second_currency or _ZERO for l in self.maturities),
+        return sum(
+            (l.amount_second_currency or _ZERO for l in self.maturities),
             _ZERO)
 
     @fields.depends('invoice_amount_second_currency', 'maturities')
@@ -367,8 +372,8 @@ class ModifyMaturities(Wizard):
                         'amount': amount,
                         'currency': invoice.company.currency.id,
                         'amount_second_currency': amount_second_currency,
-                        'second_currency': second_currency.id \
-                            if second_currency else None,
+                        'second_currency': (second_currency.id
+                            if second_currency else None),
                         })
                 defaults['maturities'] = sorted(lines, key=lambda a: a['date'])
         return defaults
@@ -388,7 +393,7 @@ class ModifyMaturities(Wizard):
             return invoice
 
         if getattr(self.ask, 'invoices', None) is None:
-            self.ask.invoices = [i.id for i in invoices \
+            self.ask.invoices = [i.id for i in invoices
                 if i.state not in ['cancel', 'paid']]
 
         while not next_invoice():
