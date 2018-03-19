@@ -4,10 +4,10 @@
 <data>
     <xpath expr="/form/notebook/page[@id='invoice']/group/group/group[@id='buttons']"
             position="inside">
-        <button name="modify_maturities" string="Modify Maturities"/>
+        <button name="modify_maturities"/>
     </xpath>
     <xpath expr="/form/notebook/page[@id='invoice']/group/group/group[@id='buttons']/button[@name='post']"
             position="after">
-        <button name="post_and_modify_maturities" string="Post"/>
+        <button name="post_and_modify_maturities"/>
     </xpath>
 </data>

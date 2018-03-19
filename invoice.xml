@@ -40,6 +40,18 @@
             <field name="name">invoice_tree</field>
         </record>
 
+        <record model="ir.model.button" id="invoice_modify_maturities_button">
+            <field name="name">modify_maturities</field>
+            <field name="string">Modify Maturities</field>
+            <field name="model" search="[('model', '=', 'account.invoice')]"/>
+        </record>
+
+        <record model="ir.model.button" id="invoice_post_and_modify_maturities_button">
+            <field name="name">post_and_modify_maturities</field>
+            <field name="string">Post</field>
+            <field name="model" search="[('model', '=', 'account.invoice')]"/>
+        </record>
+
         <record model="ir.ui.view" id="configuration_view_form">
             <field name="model">account.configuration</field>
             <field name="inherit" ref="account.configuration_view_form"/>
