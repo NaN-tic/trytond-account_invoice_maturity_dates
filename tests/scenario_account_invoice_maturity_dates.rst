@@ -112,6 +112,7 @@ Create product::
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.supplier_taxes.append(tax)
+    >>> Tax = Model.get('account.tax')
     >>> template.customer_taxes.append(Tax(tax.id))
     >>> template.save()
     >>> product.template = template
@@ -121,7 +122,7 @@ Create payment term::
 
     >>> PaymentTerm = Model.get('account.invoice.payment_term')
     >>> payment_term = PaymentTerm(name='Term')
-    >>> line = payment_term.lines.new(type='percent', ratio=Decimal('.5'))
+    >>> line = payment_term.lines.new(type='percent', percentage=Decimal('50'))
     >>> delta = line.relativedeltas.new(days=0)
     >>> line = payment_term.lines.new(type='remainder')
     >>> delta = line.relativedeltas.new(days=15)
@@ -168,7 +169,7 @@ Split first maturity into two::
     >>> first_maturity.amount = Decimal('55.0')
     >>> modify.form.pending_amount
     Decimal('55.00')
-    >>> modify.execute('modify')
+    >>> modify.execute('modify')    # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'There is still 55.00 US Dollar to be assigned. Please assignt it to some maturity date', ''))
@@ -241,7 +242,7 @@ Create a refund and check we can modify it maturities::
     >>> credit_note.payment_term = payment_term
     >>> line = credit_note.lines.new()
     >>> line.product = product
-    >>> line.quantity = -8
+    >>> line.quantity = 8
     >>> line.unit_price = Decimal(25)
     >>> credit_note.untaxed_amount
     Decimal('200.00')
