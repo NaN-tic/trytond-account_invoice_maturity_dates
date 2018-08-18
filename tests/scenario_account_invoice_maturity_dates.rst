@@ -168,7 +168,7 @@ Split first maturity into two::
     >>> modify.execute('modify')  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'There is still 55.00 U.S. Dollar to be assigned. Please assignt it to some maturity date', ''))
+    UserError: ('UserError', ('There is still 55.00 U.S. Dollar to be assigned. Please assignt it to some maturity date', ''))
     >>> new_maturity = modify.form.maturities.new()
     >>> new_maturity.amount
     Decimal('55.00')
@@ -226,7 +226,7 @@ Partialy pay the invoice and check we can not change anymore the maturities::
     >>> modify = Wizard('account.invoice.modify_maturities', [invoice])  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
+    UserError: ('UserError', ('Can not modify maturities of invoice 1 because its line (Main Payable) is reconciled', ''))
 
 Create a refund and check we can modify it maturities::
 

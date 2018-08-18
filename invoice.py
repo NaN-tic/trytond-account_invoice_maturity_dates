@@ -12,8 +12,7 @@ __all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
 ZERO = Decimal('0.0')
 
 
-class Configuration:
-    __metaclass__ = PoolMeta
+class Configuration(metaclass=PoolMeta):
     __name__ = 'account.configuration'
 
     maturities_on_customer_post = fields.Boolean('Show Maturities on '
@@ -23,8 +22,7 @@ class Configuration:
     remove_invoice_report_cache = fields.Boolean('Remove Invoice Report Cache')
 
 
-class Invoice:
-    __metaclass__ = PoolMeta
+class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
 
     @classmethod
@@ -93,7 +91,7 @@ class Invoice:
                 to_create.append(new_line)
                 continue
             values = {}
-            for field, value in new_line.iteritems():
+            for field, value in new_line.items():
                 current_value = getattr(line, field)
                 if isinstance(current_value, Model):
                     current_value = current_value.id
