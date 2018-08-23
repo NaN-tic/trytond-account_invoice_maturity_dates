@@ -320,7 +320,7 @@ class ModifyMaturities(Wizard):
                 'already_reconciled': ('Can not modify maturities of invoice '
                     '%(invoice)s because its line %(line)s is reconciled'),
                 'pending_amount': ('There is still %(amount)s %(currency)s to '
-                    'be assigned. Please assignt it to some maturity date'),
+                    'be assigned. Please assign it to some maturity date'),
                 })
 
     def default_ask(self, fields):

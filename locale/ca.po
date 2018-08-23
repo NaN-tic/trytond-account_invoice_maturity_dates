@@ -12,7 +12,7 @@ msgstr ""
 
 msgctxt "error:account.invoice.modify_maturities:"
 msgid ""
-"There is still %(amount)s %(currency)s to be assigned. Please assignt it to "
+"There is still %(amount)s %(currency)s to be assigned. Please assign it to "
 "some maturity date"
 msgstr ""
 "Falta %(amount)s %(currency)s per assignar. Si us plau, assigneu-lo a algun "
