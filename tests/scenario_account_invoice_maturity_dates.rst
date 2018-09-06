@@ -43,9 +43,6 @@ Create chart of accounts::
 
     >>> Journal = Model.get('account.journal')
     >>> cash_journal, = Journal.find([('type', '=', 'cash')])
-    >>> cash_journal.credit_account = cash
-    >>> cash_journal.debit_account = cash
-    >>> cash_journal.save()
 
 Create tax::
 
@@ -75,9 +72,10 @@ Configure cash journal::
     ...         ('company', '=', company.id),
     ...         ])
     >>> cash_journal, = Journal.find([('type', '=', 'cash')])
-    >>> cash_journal.credit_account = cash
-    >>> cash_journal.debit_account = cash
-    >>> cash_journal.save()
+    >>> PaymentMethod = Model.get('account.invoice.payment.method')
+    >>> payment_method = PaymentMethod(name='Cash', journal=cash_journal,
+    ...    credit_account=cash, debit_account=cash)
+    >>> payment_method.save()
 
 Create party::
 
@@ -217,7 +215,7 @@ Unify all maturities to two::
 Partialy pay the invoice and check we can not change anymore the maturities::
 
     >>> pay = Wizard('account.invoice.pay', [invoice])
-    >>> pay.form.journal = cash_journal
+    >>> pay.form.payment_method = payment_method
     >>> pay.form.amount = Decimal('110.00')
     >>> pay.execute('choice')
     >>> invoice.reload()
