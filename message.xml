@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data group="1">
+        <record model="ir.message" id="msg_already_reconciled">
+            <field name="text">Can not modify maturities of invoice %(invoice)s because its line %(line)s is reconciled</field>
+        </record>
+        <record model="ir.message" id="msg_pending_amount">
+            <field name="text">There is still %(amount)s %(currency)s to be assigned. Please assign it to some maturity date</field>
+        </record>
+    </data>
+</tryton>

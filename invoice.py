@@ -6,6 +6,8 @@ from trytond.wizard import Wizard, StateView, StateTransition, Button
 from trytond.pyson import Bool, Eval
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
     'ModifyMaturitiesStart', 'ModifyMaturities']
@@ -311,16 +313,6 @@ class ModifyMaturities(Wizard):
             ])
     modify = StateTransition()
 
-    @classmethod
-    def __setup__(cls):
-        super(ModifyMaturities, cls).__setup__()
-        cls._error_messages.update({
-                'already_reconciled': ('Can not modify maturities of invoice '
-                    '%(invoice)s because its line %(line)s is reconciled'),
-                'pending_amount': ('There is still %(amount)s %(currency)s to '
-                    'be assigned. Please assign it to some maturity date'),
-                })
-
     def default_ask(self, fields):
         Currency = Pool().get('currency.currency')
 
@@ -348,10 +340,11 @@ class ModifyMaturities(Wizard):
             if line.account == invoice.account:
                 if line.reconciliation:
                     # TODO remove raise user error or continue
-                    self.raise_user_error('already_reconciled', {
-                            'invoice': invoice.rec_name,
-                            'line': line.rec_name,
-                            })
+                    raise UserError(
+                        gettext('account_invoice_maturity_dates.msg_already_reconciled',
+                        invoice=invoice.rec_name,
+                        line=line.rec_name,
+                        ))
 
                 amount_second_currency = None
                 second_currency = None
@@ -406,10 +399,11 @@ class ModifyMaturities(Wizard):
 
         if self.ask.pending_amount:
             # TODO remove raise user error
-            self.raise_user_error('pending_amount', {
-                    'amount': str(self.ask.pending_amount),
-                    'currency': self.ask.currency.rec_name,
-                    })
+            raise UserError(
+                gettext('account_invoice_maturity_dates.msg_pending_amount',
+                amount=self.ask.pending_amount,
+                currency=self.ask.currency.rec_name,
+                ))
 
         invoice.set_maturities(self.ask.maturities)
 

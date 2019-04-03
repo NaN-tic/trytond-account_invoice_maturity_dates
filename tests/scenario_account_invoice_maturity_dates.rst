@@ -65,12 +65,6 @@ Allow to cancel moves on expense and revenue jounral::
 
 Configure cash journal::
 
-    >>> Account = Model.get('account.account')
-    >>> cash, = Account.find([
-    ...         ('kind', '=', 'other'),
-    ...         ('name', '=', 'Main Cash'),
-    ...         ('company', '=', company.id),
-    ...         ])
     >>> cash_journal, = Journal.find([('type', '=', 'cash')])
     >>> PaymentMethod = Model.get('account.invoice.payment.method')
     >>> payment_method = PaymentMethod(name='Cash', journal=cash_journal,
