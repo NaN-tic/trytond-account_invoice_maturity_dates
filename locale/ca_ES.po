@@ -20,11 +20,11 @@ msgstr ""
 
 msgctxt "field:account.configuration,maturities_on_customer_post:"
 msgid "Show Maturities on Customer Invoices Post"
-msgstr "Mostra venciments al confirmar factures de client"
+msgstr "Mostra venciments al comptabilitzar factures de client"
 
 msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
-msgstr "Mostra venciments al confirmar factures de proveïdor"
+msgstr "Mostra venciments al comptabilitzar factures de proveïdor"
 
 msgctxt "field:account.invoice.maturity_date,amount:"
 msgid "Amount"
@@ -44,7 +44,7 @@ msgstr "Data"
 
 msgctxt "field:account.invoice.maturity_date,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:account.invoice.maturity_date,move_line:"
 msgid "Move Line"
@@ -60,7 +60,7 @@ msgstr "Dígits de la moneda"
 
 msgctxt "field:account.invoice.modify_maturities.start,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:account.invoice.modify_maturities.start,invoice_amount:"
 msgid "Invoice Amount"
@@ -116,7 +116,7 @@ msgstr "Modificar venciments"
 
 msgctxt "view:account.invoice:"
 msgid "Post"
-msgstr "Confirma"
+msgstr "Comptabilitza"
 
 msgctxt "wizard_button:account.invoice.modify_maturities,start,end:"
 msgid "Cancel"
