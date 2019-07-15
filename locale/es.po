@@ -20,11 +20,11 @@ msgstr ""
 
 msgctxt "field:account.configuration,maturities_on_customer_post:"
 msgid "Show Maturities on Customer Invoices Post"
-msgstr "Mostrar vencimientos al confirmar factures de cliente"
+msgstr "Mostrar vencimientos al contabilizar factures de cliente"
 
 msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
-msgstr "Mostrar vencimientos al confirmar factures de proveedor"
+msgstr "Mostrar vencimientos al contabilizar facturas de proveedor"
 
 msgctxt "field:account.configuration,remove_invoice_report_cache:"
 msgid "Remove Invoice Report Cache"
@@ -136,7 +136,7 @@ msgstr "Inicio modificar vencimientos"
 
 msgctxt "model:ir.action,name:wizard_modify_maturities"
 msgid "Post/Modify Maturities"
-msgstr "Confirmar/Modificar vencimientos"
+msgstr "Contabilizar/modificar vencimientos"
 
 msgctxt "view:account.configuration:"
 msgid "Customer Invoices"
@@ -164,7 +164,7 @@ msgstr "Modificar vencimientos"
 
 msgctxt "view:account.invoice:"
 msgid "Post"
-msgstr "Confirmar"
+msgstr "Contabilizar"
 
 msgctxt "wizard_button:account.invoice.modify_maturities,ask,end:"
 msgid "Cancel"
