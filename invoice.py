@@ -278,8 +278,7 @@ class ModifyMaturitiesStart(ModelView):
 
     @fields.depends('maturities')
     def on_change_with_lines_amount(self, name=None):
-        _ZERO = Decimal('0.0')
-        return sum((l.amount or _ZERO for l in self.maturities), _ZERO)
+        return sum((l.amount or 0 for l in self.maturities), 0)
 
     @fields.depends('invoice_amount', 'maturities')
     def on_change_with_pending_amount(self, name=None):
