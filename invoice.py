@@ -79,7 +79,7 @@ class Invoice(metaclass=PoolMeta):
 
         processed = set()
         for maturity in maturity_dates:
-            amount = maturity.amount
+            amount = Decimal(maturity.amount or 0)
             if self.type == 'out':
                 amount = amount.copy_negate()
             new_line = self._get_move_line(maturity.date, amount)
@@ -189,7 +189,7 @@ class InvoiceMaturityDate(ModelView):
         if self.amount and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
                 self.amount_second_currency = abs(Currency.compute(
-                    self.currency, self.amount, self.second_currency))
+                    self.currency, Decimal(self.amount), self.second_currency))
 
     @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
         'second_currency')
@@ -199,7 +199,7 @@ class InvoiceMaturityDate(ModelView):
         if self.amount_second_currency and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
                 self.amount = abs(Currency.compute(
-                    self.second_currency, self.amount_second_currency,
+                    self.second_currency, Decimal(self.amount_second_currency),
                     self.currency))
 
 
@@ -278,7 +278,8 @@ class ModifyMaturitiesStart(ModelView):
 
     @fields.depends('maturities')
     def on_change_with_lines_amount(self, name=None):
-        return sum((l.amount or Decimal(0) for l in self.maturities), Decimal(0))
+        return sum(
+            (Decimal(l.amount or 0) for l in self.maturities), Decimal(0))
 
     @fields.depends('invoice_amount', 'maturities')
     def on_change_with_pending_amount(self, name=None):
@@ -288,10 +289,9 @@ class ModifyMaturitiesStart(ModelView):
 
     @fields.depends('maturities')
     def on_change_with_lines_amount_second_currency(self, name=None):
-        _ZERO = Decimal('0.0')
         return sum(
-            (l.amount_second_currency or _ZERO for l in self.maturities),
-            _ZERO)
+            (Decimal(l.amount_second_currency or 0) for l in self.maturities),
+            Decimal(0))
 
     @fields.depends('invoice_amount_second_currency', 'maturities')
     def on_change_with_pending_amount_second_currency(self, name=None):
