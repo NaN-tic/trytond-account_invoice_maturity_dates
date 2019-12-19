@@ -79,7 +79,7 @@ class Invoice(metaclass=PoolMeta):
 
         processed = set()
         for maturity in maturity_dates:
-            amount = Decimal(maturity.amount or 0)
+            amount = maturity.amount
             if self.type == 'out':
                 amount = amount.copy_negate()
             new_line = self._get_move_line(maturity.date, amount)
@@ -101,6 +101,13 @@ class Invoice(metaclass=PoolMeta):
                     values[field] = value
             processed.add(line)
             if values:
+                quantize = Decimal(10) ** -Decimal(maturity.currency_digits)
+                if 'credit' in values:
+                    values['credit'] = Decimal(values.get('credit')).quantize(
+                            quantize)
+                if 'debit' in values:
+                    values['debit'] = Decimal(values.get('debit')).quantize(
+                            quantize)
                 to_write.extend(([line], values))
 
         for line in self.move.lines:
@@ -188,8 +195,10 @@ class InvoiceMaturityDate(ModelView):
 
         if self.amount and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
-                self.amount_second_currency = abs(Currency.compute(
-                    self.currency, Decimal(self.amount), self.second_currency))
+                quantize = Decimal(10) ** -Decimal(self.second_currency_digits)
+                self.amount_second_currency = Decimal(abs(Currency.compute(
+                        self.currency, self.amount, self.second_currency))).\
+                            quantize(quantize)
 
     @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
         'second_currency')
@@ -198,9 +207,10 @@ class InvoiceMaturityDate(ModelView):
 
         if self.amount_second_currency and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
-                self.amount = abs(Currency.compute(
-                    self.second_currency, Decimal(self.amount_second_currency),
-                    self.currency))
+                quantize = Decimal(10) ** -Decimal(self.currency_digits)
+                self.amount = Decimal(abs(Currency.compute(
+                    self.second_currency, self.amount_second_currency,
+                    self.currency))).quantize(quantize)
 
 
 class ModifyMaturitiesStart(ModelView):
@@ -361,8 +371,11 @@ class ModifyMaturities(Wizard):
                         'date': line.maturity_date,
                         'amount': amount,
                         'currency': invoice.company.currency.id,
+                        'currency_digits': invoice.company.currency.digits,
                         'amount_second_currency': amount_second_currency,
                         'second_currency': (second_currency.id
+                            if second_currency else None),
+                        'second_currency_digits': (second_currency.digits
                             if second_currency else None),
                         })
                 defaults['maturities'] = sorted(lines, key=lambda a: a['date'])
