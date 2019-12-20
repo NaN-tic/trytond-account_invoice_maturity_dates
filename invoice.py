@@ -210,7 +210,7 @@ class InvoiceMaturityDate(ModelView):
                 quantize = Decimal(10) ** -Decimal(self.currency_digits)
                 self.amount = abs(Currency.compute(
                     self.second_currency, self.amount_second_currency,
-                    self.currency))).quantize(quantize)
+                    self.currency)).quantize(quantize)
 
 
 class ModifyMaturitiesStart(ModelView):
