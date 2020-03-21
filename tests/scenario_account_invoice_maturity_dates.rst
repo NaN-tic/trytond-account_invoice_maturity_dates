@@ -154,7 +154,7 @@ Split first maturity into two::
     Decimal('110.00')
     >>> second_maturity.date == today + relativedelta(days=15)
     True
-    >>> first_maturity.amount = Decimal('55.0')
+    >>> first_maturity.amount = Decimal('55.00')
     >>> modify.form.pending_amount
     Decimal('55.00')
     >>> modify.execute('modify')  # doctest: +IGNORE_EXCEPTION_DETAIL
@@ -170,7 +170,7 @@ Split first maturity into two::
     >>> first, second, third = sorted(invoice.lines_to_pay,
     ...     key=lambda a: a.maturity_date)
     >>> first.credit
-    Decimal('55.0')
+    Decimal('55.00')
     >>> first.maturity_date == today
     True
     >>> second.credit
@@ -266,7 +266,7 @@ Create a refund and check we can modify it maturities::
     >>> first, second, third = sorted(credit_note.lines_to_pay,
     ...     key=lambda a: a.maturity_date)
     >>> first.debit
-    Decimal('55.0')
+    Decimal('55.00')
     >>> first.maturity_date == today
     True
     >>> second.debit
@@ -316,7 +316,7 @@ Split first maturity into two::
     Decimal('110.00')
     >>> second_maturity.date == today + relativedelta(days=15)
     True
-    >>> first_maturity.amount = Decimal('55.0')
+    >>> first_maturity.amount = Decimal('55.00')
     >>> new_maturity = modify.form.maturities.new()
     >>> new_maturity.amount
     Decimal('55.00')
@@ -326,7 +326,7 @@ Split first maturity into two::
     >>> first, second, third = sorted(invoice.lines_to_pay,
     ...     key=lambda a: a.maturity_date)
     >>> first.debit
-    Decimal('55.0')
+    Decimal('55.00')
     >>> first.maturity_date == today
     True
     >>> second.debit
@@ -384,7 +384,7 @@ Create a customer refund and check we can modify it maturities::
     >>> first, second, third = sorted(credit_note.lines_to_pay,
     ...     key=lambda a: a.maturity_date)
     >>> first.credit
-    Decimal('55.0')
+    Decimal('55.00')
     >>> first.maturity_date == today
     True
     >>> second.credit
