@@ -397,7 +397,7 @@ class ModifyMaturities(Wizard):
 
         if getattr(self.ask, 'invoices', None) is None:
             self.ask.invoices = [i.id for i in invoices
-                if i.state not in ['cancel', 'paid']]
+                if i.state not in ['cancelled', 'paid']]
 
         while not next_invoice():
             return 'end'
