@@ -290,7 +290,7 @@ class ModifyMaturitiesStart(ModelView):
     def on_change_with_lines_amount(self, name=None):
         return sum((l.amount or Decimal(0) for l in self.maturities), Decimal(0))
 
-    @fields.depends('invoice_amount', 'maturities')
+    @fields.depends('invoice_amount', methods=['on_change_with_lines_amount'])
     def on_change_with_pending_amount(self, name=None):
         if self.invoice_amount:
             lines_amount = self.on_change_with_lines_amount()
@@ -303,7 +303,8 @@ class ModifyMaturitiesStart(ModelView):
             (l.amount_second_currency or _ZERO for l in self.maturities),
             _ZERO)
 
-    @fields.depends('invoice_amount_second_currency', 'maturities')
+    @fields.depends('invoice_amount_second_currency',
+        methods=['on_change_with_lines_amount'])
     def on_change_with_pending_amount_second_currency(self, name=None):
         if self.invoice_amount_second_currency:
             lines_amount = self.on_change_with_lines_amount_second_currency()
