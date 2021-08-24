@@ -26,10 +26,6 @@ msgctxt "field:account.invoice.maturity_date,currency:"
 msgid "Currency"
 msgstr "Moneda"
 
-msgctxt "field:account.invoice.maturity_date,currency_digits:"
-msgid "Currency Digits"
-msgstr "Dígits de la moneda"
-
 msgctxt "field:account.invoice.maturity_date,date:"
 msgid "Date"
 msgstr "Data"
@@ -46,17 +42,9 @@ msgctxt "field:account.invoice.maturity_date,second_currency:"
 msgid "Second Currency"
 msgstr "Segona moneda"
 
-msgctxt "field:account.invoice.maturity_date,second_currency_digits:"
-msgid "Second Currency Digits"
-msgstr "Decimals segona moneda"
-
 msgctxt "field:account.invoice.modify_maturities.start,currency:"
 msgid "Currency"
 msgstr "Moneda"
-
-msgctxt "field:account.invoice.modify_maturities.start,currency_digits:"
-msgid "Currency Digits"
-msgstr "Dígits de la moneda"
 
 msgctxt "field:account.invoice.modify_maturities.start,invoice:"
 msgid "Invoice"
@@ -100,11 +88,6 @@ msgstr "Import pendent segona moneda"
 msgctxt "field:account.invoice.modify_maturities.start,second_currency:"
 msgid "Second Currency"
 msgstr "Segona moneda"
-
-msgctxt ""
-"field:account.invoice.modify_maturities.start,second_currency_digits:"
-msgid "Second Currency Digits"
-msgstr "Decimals segona moneda"
 
 msgctxt "model:account.invoice.maturity_date,name:"
 msgid "Invoice Maturity Date"

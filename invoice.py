@@ -8,6 +8,7 @@ from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.modules.currency.fields import Monetary
 
 __all__ = ['Configuration', 'Invoice', 'InvoiceMaturityDate',
     'ModifyMaturitiesStart', 'ModifyMaturities']
@@ -101,7 +102,7 @@ class Invoice(metaclass=PoolMeta):
                     values[field] = value
             processed.add(line)
             if values:
-                quantize = Decimal(10) ** -Decimal(maturity.currency_digits)
+                quantize = Decimal(10) ** -Decimal(maturity.currency.digits)
                 if 'credit' in values:
                     values['credit'] = Decimal(values.get('credit')).quantize(
                             quantize)
@@ -133,27 +134,20 @@ class InvoiceMaturityDate(ModelView):
     move_line = fields.Many2One('account.move.line', 'Move Line',
         readonly=True)
     date = fields.Date('Date', required=True)
-    amount = fields.Numeric('Amount', digits=(16, Eval('currency_digits', 2)),
-        depends=['currency_digits'], required=True)
-    amount_second_currency = fields.Numeric('Amount Second Currency',
-        digits=(16, Eval('second_currency_digits', 2)), states={
+    amount = Monetary('Amount', currency='currency', digits='currency',
+        required=True)
+    amount_second_currency = Monetary('Amount Second Currency',
+        currency='second_currency', digits='second_currency', states={
             'invisible': ~Bool(Eval('second_currency', None)),
-        }, depends=['second_currency_digits', 'second_currency'])
+        }, depends=['second_currency'])
     currency = fields.Many2One('currency.currency', 'Currency', required=True,
         readonly=True)
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'on_change_with_currency_digits')
     second_currency = fields.Many2One('currency.currency', 'Second Currency',
         readonly=True, states={
             # 'required': Bool(Eval('amount_second_currency')),
             'invisible': ~Bool(Eval('second_currency', None)),
             },
         depends=['amount_second_currency', 'second_currency'])
-    second_currency_digits = fields.Function(fields.Integer(
-            'Second Currency Digits', states={
-                'invisible': ~Bool(Eval('second_currency', None)),
-            }, depends=['second_currency']),
-        'on_change_with_second_currency_digits')
 
     @staticmethod
     def default_invoice():
@@ -164,10 +158,6 @@ class InvoiceMaturityDate(ModelView):
         return Transaction().context.get('currency')
 
     @staticmethod
-    def default_second_currency():
-        return Transaction().context.get('second_currency', None)
-
-    @staticmethod
     def default_amount():
         return Transaction().context.get('amount', Decimal('0.0'))
 
@@ -176,18 +166,6 @@ class InvoiceMaturityDate(ModelView):
         return Transaction().context.get('amount_second_currency',
             Decimal('0.0'))
 
-    @fields.depends('currency')
-    def on_change_with_currency_digits(self, name=None):
-        if self.currency:
-            return self.currency.digits
-        return 2
-
-    @fields.depends('second_currency')
-    def on_change_with_second_currency_digits(self, name=None):
-        if self.second_currency:
-            return self.second_currency.digits
-        return 2
-
     @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
         'second_currency')
     def on_change_amount(self):
@@ -195,7 +173,7 @@ class InvoiceMaturityDate(ModelView):
 
         if self.amount and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
-                quantize = Decimal(10) ** -Decimal(self.second_currency_digits)
+                quantize = Decimal(10) ** -Decimal(self.second_currency.digits)
                 self.amount_second_currency = Decimal(abs(Currency.compute(
                         self.currency, self.amount, self.second_currency))).\
                             quantize(quantize)
@@ -207,7 +185,7 @@ class InvoiceMaturityDate(ModelView):
 
         if self.amount_second_currency and self.second_currency:
             with Transaction().set_context(date=self.invoice.currency_date):
-                quantize = Decimal(10) ** -Decimal(self.currency_digits)
+                quantize = Decimal(10) ** -Decimal(self.currency.digits)
                 self.amount = abs(Currency.compute(
                     self.second_currency, self.amount_second_currency,
                     self.currency)).quantize(quantize)
@@ -219,49 +197,37 @@ class ModifyMaturitiesStart(ModelView):
     invoices = fields.Many2Many(
         'account.invoice', None, None, 'Invoices', readonly=True)
     invoice = fields.Many2One('account.invoice', 'Invoice', readonly=True)
-    invoice_amount = fields.Numeric('Invoice Amount',
-        digits=(16, Eval('currency_digits', 2)),
-        depends=['currency_digits'], required=True, readonly=True)
-    invoice_amount_second_currency = fields.Numeric(
-        'Invoice Amount Second Currency',
-        digits=(16, Eval('second_currency_digits', 2)),
+    invoice_amount = Monetary('Invoice Amount',
+        currency='currency', digits='currency', required=True, readonly=True)
+    invoice_amount_second_currency = Monetary('Invoice Amount Second Currency',
+        currency='second_currency', digits='second_currency',
         states={
             'invisible': ~Bool(Eval('second_currency')),
-        },
-        depends=['second_currency_digits', 'second_currency'],
-        readonly=True)
+        }, depends=['second_currency'], readonly=True)
     currency = fields.Many2One('currency.currency', 'Currency', required=True,
         readonly=True)
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'on_change_with_currency_digits')
     second_currency = fields.Many2One('currency.currency', 'Second Currency',
         readonly=True, states={
             'invisible': ~Bool(Eval('second_currency', None)),
         }, depends=['second_currency'])
-    second_currency_digits = fields.Function(fields.Integer(
-            'Second Currency Digits'),
-        'on_change_with_second_currency_digits')
-    lines_amount = fields.Function(fields.Numeric('Assigned Amount',
-            digits=(16, Eval('currency_digits', 2)),
-            depends=['currency_digits']),
+    lines_amount = fields.Function(Monetary('Assigned Amount',
+        currency='currency', digits='currency'),
         'on_change_with_lines_amount')
-    lines_amount_second_currency = fields.Function(fields.Numeric(
-            'Assigned Amount Second Currency',
-            digits=(16, Eval('currency_digits', 2)),
-            states={
-                'invisible': ~Bool(Eval('second_currency', None)),
-            }, depends=['currency_digits', 'second_currency']),
-        'on_change_with_lines_amount_second_currency')
-    pending_amount = fields.Function(fields.Numeric('Pending Amount',
-            digits=(16, Eval('currency_digits', 2)),
-            depends=['currency_digits']),
+    lines_amount_second_currency = fields.Function(Monetary(
+        'Assigned Amount Second Currency',
+        currency='second_currency', digits='second_currency',
+        states={
+            'invisible': ~Bool(Eval('second_currency', None)),
+        }), 'on_change_with_lines_amount_second_currency')
+    pending_amount = fields.Function(Monetary('Pending Amount',
+            currency='currency', digits='currency'),
         'on_change_with_pending_amount')
-    pending_amount_second_currency = fields.Function(fields.Numeric(
-            'Pending Amount Second Currency',
-            digits=(16, Eval('second_currency_digits', 2)),
-            states={
-                'invisible': ~Bool(Eval('second_currency', None)),
-            }, depends=['second_currency_digits', 'second_currency']),
+    pending_amount_second_currency = fields.Function(Monetary(
+        'Pending Amount Second Currency',
+        currency='second_currency', digits='second_currency',
+        states={
+            'invisible': ~Bool(Eval('second_currency', None)),
+        }, depends=['second_currency']),
         'on_change_with_pending_amount_second_currency')
     maturities = fields.One2Many('account.invoice.maturity_date', None,
         'Maturities', context={
@@ -273,18 +239,6 @@ class ModifyMaturitiesStart(ModelView):
                 Eval('pending_amount_second_currency', None)),
             },
         depends=['currency', 'pending_amount'])
-
-    @fields.depends('currency')
-    def on_change_with_currency_digits(self, name=None):
-        if self.currency:
-            return self.currency.digits
-        return 2
-
-    @fields.depends('second_currency')
-    def on_change_with_second_currency_digits(self, name=None):
-        if self.second_currency:
-            return self.second_currency.digits
-        return 2
 
     @fields.depends('maturities')
     def on_change_with_lines_amount(self, name=None):
@@ -332,14 +286,12 @@ class ModifyMaturities(Wizard):
         defaults['invoices'] = [i.id for i in self.ask.invoices]
         defaults['invoice'] = invoice.id
         defaults['currency'] = invoice.company.currency.id
-        defaults['currency_digits'] = invoice.company.currency.digits
         if invoice.company.currency.id != invoice.currency.id:
             with Transaction().set_context(date=invoice.currency_date):
                 total_amount = Currency.compute(
                     invoice.currency, invoice.total_amount,
                     invoice.company.currency)
             defaults['second_currency'] = invoice.currency.id
-            defaults['second_currency_digits'] = invoice.currency.digits
             defaults['invoice_amount_second_currency'] = invoice.total_amount
         else:
             total_amount = invoice.total_amount
@@ -372,11 +324,8 @@ class ModifyMaturities(Wizard):
                         'date': line.maturity_date,
                         'amount': amount,
                         'currency': invoice.company.currency.id,
-                        'currency_digits': invoice.company.currency.digits,
                         'amount_second_currency': amount_second_currency,
                         'second_currency': (second_currency.id
-                            if second_currency else None),
-                        'second_currency_digits': (second_currency.digits
                             if second_currency else None),
                         })
                 defaults['maturities'] = sorted(lines, key=lambda a: a['date'])
