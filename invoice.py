@@ -67,15 +67,36 @@ class Invoice(metaclass=PoolMeta):
 
     def set_maturities(self, maturity_dates):
         pool = Pool()
+        Invoice = pool.get('account.invoice')
         Move = pool.get('account.move')
         Line = pool.get('account.move.line')
+        CancelMove = pool.get('account.move.cancel', type='wizard')
 
         if not self.move:
             return
 
+        invoice = Invoice.__table__()
+        cursor = Transaction().connection.cursor()
+
         to_create, to_write, to_delete = [], [], []
 
-        Move.draft([self.move])
+        # cancel move
+        Transaction().set_context(active_ids=[self.move.id])
+        session_id, _, _ = CancelMove.create()
+        cancel_move = CancelMove(session_id)
+        cancel_move.default.description = None
+        cancel_move.transition_cancel()
+        CancelMove.delete(session_id)
+
+        # copy move, after copy each line and keep origin id in lines dict
+        new_move, = Move.copy([self.move], default={'lines': None})
+        lines = {}
+        for line in self.move.lines:
+            lines[line.id] = Line.copy([line], default={'move': new_move})[0]
+        cursor.execute(*invoice.update(
+            columns=[invoice.move, invoice.state],
+            values=[new_move.id, 'posted'],
+            where=( (invoice.id == self.id) )))
 
         processed = set()
         for maturity in maturity_dates:
@@ -83,15 +104,16 @@ class Invoice(metaclass=PoolMeta):
             if self.type == 'out':
                 amount = amount.copy_negate()
             new_line = self._get_move_line(maturity.date, amount)
-            # With the speedup patch this may return a Line instance
-            # XXX: Use instance when patch is commited
-            if isinstance(new_line, Line):
-                new_line = new_line._save_values
-            line = maturity.move_line
+            new_line = new_line._save_values
+
+            line = None
+            if maturity.move_line:
+                line = lines.get(maturity.move_line.id)
             if not line:
-                new_line['move'] = self.move.id
+                new_line['move'] = new_move.id
                 to_create.append(new_line)
                 continue
+
             values = {}
             for field, value in new_line.items():
                 current_value = getattr(line, field)
@@ -100,6 +122,7 @@ class Invoice(metaclass=PoolMeta):
                 if current_value != value:
                     values[field] = value
             processed.add(line)
+
             if values:
                 quantize = Decimal(10) ** -Decimal(maturity.currency_digits)
                 if 'credit' in values:
@@ -110,7 +133,7 @@ class Invoice(metaclass=PoolMeta):
                             quantize)
                 to_write.extend(([line], values))
 
-        for line in self.move.lines:
+        for line in new_move.lines:
             if line.account == self.account:
                 if line not in processed:
                     to_delete.append(line)
@@ -122,7 +145,7 @@ class Invoice(metaclass=PoolMeta):
         if to_delete:
             Line.delete(to_delete)
 
-        Move.post([self.move])
+        Move.post([new_move])
 
 
 class InvoiceMaturityDate(ModelView):
