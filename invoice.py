@@ -189,7 +189,7 @@ class InvoiceMaturityDate(ModelView):
         return 2
 
     @fields.depends('invoice', 'amount', 'amount_second_currency', 'currency',
-        'second_currency')
+        'second_currency', 'second_currency_digits')
     def on_change_amount(self):
         Currency = Pool().get('currency.currency')
 
