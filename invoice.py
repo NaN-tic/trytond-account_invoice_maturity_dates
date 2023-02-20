@@ -409,6 +409,8 @@ class ModifyMaturities(Wizard):
 
         config = Configuration(1)
         invoice = self.ask.invoice
+        if not invoice:
+            return 'next_'
 
         if self.ask.pending_amount:
             # TODO remove raise user error
