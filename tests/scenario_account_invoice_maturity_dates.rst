@@ -16,7 +16,6 @@ Imports::
     ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences
-    >>> today = datetime.date.today()
 
 Install account_invoice::
 
@@ -115,6 +114,10 @@ Create payment term::
     >>> line = payment_term.lines.new(type='remainder')
     >>> delta = line.relativedeltas.new(days=15)
     >>> payment_term.save()
+
+Compute today::
+
+    >>> today = datetime.date.today()
 
 Create invoice::
 
