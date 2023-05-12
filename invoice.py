@@ -162,6 +162,10 @@ class InvoiceMaturityDate(ModelView):
         return Transaction().context.get('amount', Decimal('0.0'))
 
     @staticmethod
+    def default_second_currency():
+        return Transaction().context.get('second_currency')
+
+    @staticmethod
     def default_amount_second_currency():
         return Transaction().context.get('amount_second_currency',
             Decimal('0.0'))
@@ -257,12 +261,20 @@ class ModifyMaturitiesStart(ModelView):
             (l.amount_second_currency or _ZERO for l in self.maturities),
             _ZERO)
 
-    @fields.depends('invoice_amount_second_currency',
+    @fields.depends('invoice_amount_second_currency', 'invoice',
+        'second_currency', 'pending_amount_second_currency',
         methods=['on_change_with_lines_amount'])
     def on_change_with_pending_amount_second_currency(self, name=None):
-        if self.invoice_amount_second_currency:
-            lines_amount = self.on_change_with_lines_amount_second_currency()
-            return self.invoice_amount_second_currency - lines_amount
+        with Transaction().set_context(
+                invoice=self.invoice,
+                currency=self.currency,
+                second_currency=(self.second_currency or None),
+                amount=self.pending_amount,
+                amount_second_currency=(
+                    self.pending_amount_second_currency or None),):
+            if self.invoice_amount_second_currency:
+                lines_amount = self.on_change_with_lines_amount_second_currency()
+                return self.invoice_amount_second_currency - lines_amount
 
 
 class ModifyMaturities(Wizard):
