@@ -9,7 +9,5 @@
         <field name="maturities_on_customer_post"/>
         <label id="maturities_on_supplier_post" string="Supplier Invoices"/>
         <field name="maturities_on_supplier_post"/>
-        <label name="remove_invoice_report_cache"/>
-        <field name="remove_invoice_report_cache"/>
     </xpath>
 </data>

@@ -10,116 +10,13 @@ msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
 msgstr "Mostrar vencimientos al contabilizar facturas de proveedor"
 
-msgctxt "field:account.configuration,remove_invoice_report_cache:"
-msgid "Remove Invoice Report Cache"
-msgstr "Borra el informe de factura de la cache"
-
-msgctxt "field:account.invoice.maturity_date,amount:"
-msgid "Amount"
-msgstr "Importe"
-
-msgctxt "field:account.invoice.maturity_date,amount_second_currency:"
-msgid "Amount Second Currency"
-msgstr "Importe moneda secundaria"
-
-msgctxt "field:account.invoice.maturity_date,currency:"
-msgid "Currency"
-msgstr "Moneda"
-
-msgctxt "field:account.invoice.maturity_date,date:"
-msgid "Date"
-msgstr "Fecha"
-
-msgctxt "field:account.invoice.maturity_date,invoice:"
-msgid "Invoice"
-msgstr "Factura"
-
-msgctxt "field:account.invoice.maturity_date,move_line:"
-msgid "Move Line"
-msgstr "Apunte"
-
-msgctxt "field:account.invoice.maturity_date,second_currency:"
-msgid "Second Currency"
-msgstr "Segunda moneda"
-
-msgctxt "field:account.invoice.modify_maturities.start,currency:"
-msgid "Currency"
-msgstr "Moneda"
-
-msgctxt "field:account.invoice.modify_maturities.start,invoice:"
-msgid "Invoice"
-msgstr "Factura"
-
-msgctxt "field:account.invoice.modify_maturities.start,invoice_amount:"
-msgid "Invoice Amount"
-msgstr "Importe factura"
-
-msgctxt ""
-"field:account.invoice.modify_maturities.start,invoice_amount_second_currency:"
-msgid "Invoice Amount Second Currency"
-msgstr "Importe factura moneda secundaria"
-
-msgctxt "field:account.invoice.modify_maturities.start,invoices:"
-msgid "Invoices"
-msgstr "Facturas"
-
-msgctxt "field:account.invoice.modify_maturities.start,lines_amount:"
-msgid "Assigned Amount"
-msgstr "Importe asignado"
-
-msgctxt ""
-"field:account.invoice.modify_maturities.start,lines_amount_second_currency:"
-msgid "Assigned Amount Second Currency"
-msgstr "Importe asignado moneda secundaria"
-
-msgctxt "field:account.invoice.modify_maturities.start,maturities:"
-msgid "Maturities"
-msgstr "Vencimientos"
-
-msgctxt "field:account.invoice.modify_maturities.start,pending_amount:"
-msgid "Pending Amount"
-msgstr "Importe pendiente"
-
-msgctxt ""
-"field:account.invoice.modify_maturities.start,pending_amount_second_currency:"
-msgid "Pending Amount Second Currency"
-msgstr "Importe pendiente moneda secundaria"
-
-msgctxt "field:account.invoice.modify_maturities.start,second_currency:"
-msgid "Second Currency"
-msgstr "Segunda moneda"
-
-msgctxt "model:account.invoice.maturity_date,name:"
-msgid "Invoice Maturity Date"
-msgstr "Fechas vencimiento factura"
-
-msgctxt "model:account.invoice.modify_maturities.start,name:"
-msgid "Modify Maturities Start"
-msgstr "Inicio modificar vencimientos"
-
-msgctxt "model:ir.action,name:wizard_modify_maturities"
+msgctxt "model:ir.action,name:"
 msgid "Post/Modify Maturities"
 msgstr "Contabilizar/modificar vencimientos"
 
-msgctxt "model:ir.message,text:msg_already_reconciled"
-msgid ""
-"Can not modify maturities of invoice %(invoice)s because its line %(line)s "
-"is reconciled"
-msgstr ""
-"No se puede modificar los vencimientos de la factura %(invoice)s porqué su "
-"apunte %(line)s está conciliado"
-
-msgctxt "model:ir.message,text:msg_pending_amount"
-msgid ""
-"There is still %(amount)s %(currency)s to be assigned. Please assign it to "
-"some maturity date"
-msgstr ""
-"Faltan %(amount)s %(currency)s para asignar. Por favor, asígnelos a algún "
-"vencimiento"
-
 msgctxt "model:ir.model.button,string:invoice_modify_maturities_button"
-msgid "Modify Maturities"
-msgstr "Modificar vencimientos"
+msgid "Reschedule"
+msgstr "Reprogramar"
 
 msgctxt ""
 "model:ir.model.button,string:invoice_post_and_modify_maturities_button"
@@ -138,14 +35,6 @@ msgctxt "view:account.configuration:"
 msgid "Supplier Invoices"
 msgstr "Facturas de proveedor"
 
-msgctxt "view:account.invoice.maturity_date:"
-msgid "Invoice Maturity Date"
-msgstr "Fechas vencimiento factura"
-
-msgctxt "view:account.invoice.modify_maturities.start:"
-msgid "Modify Maturities Start"
-msgstr "Inicio modificar vencimientos"
-
 msgctxt "view:account.invoice:"
 msgid "Modify Maturities"
 msgstr "Modificar vencimientos"
@@ -153,11 +42,3 @@ msgstr "Modificar vencimientos"
 msgctxt "view:account.invoice:"
 msgid "Post"
 msgstr "Contabilizar"
-
-msgctxt "wizard_button:account.invoice.modify_maturities,ask,end:"
-msgid "Cancel"
-msgstr "Cancelar"
-
-msgctxt "wizard_button:account.invoice.modify_maturities,ask,modify:"
-msgid "Ok"
-msgstr "Aceptar"
