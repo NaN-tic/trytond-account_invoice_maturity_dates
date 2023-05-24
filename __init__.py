@@ -8,9 +8,4 @@ def register():
     Pool.register(
         invoice.Configuration,
         invoice.Invoice,
-        invoice.InvoiceMaturityDate,
-        invoice.ModifyMaturitiesStart,
         module='account_invoice_maturity_dates', type_='model')
-    Pool.register(
-        invoice.ModifyMaturities,
-        module='account_invoice_maturity_dates', type_='wizard')
