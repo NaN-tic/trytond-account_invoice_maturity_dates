@@ -14,10 +14,6 @@ msgctxt "model:ir.action,name:"
 msgid "Post/Modify Maturities"
 msgstr "Contabilizar/modificar vencimientos"
 
-msgctxt "model:ir.model.button,string:invoice_modify_maturities_button"
-msgid "Reschedule"
-msgstr "Reprogramar"
-
 msgctxt ""
 "model:ir.model.button,string:invoice_post_and_modify_maturities_button"
 msgid "Post"

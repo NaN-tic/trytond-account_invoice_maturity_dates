@@ -26,21 +26,11 @@ class Invoice(metaclass=PoolMeta):
         # We must duplicate the button otherwise the return value is not
         # correctly due to missing returns on inheritance
         cls._buttons.update({
-                'modify_maturities': {
-                    'invisible': (Eval('state') != 'posted'),
-                    'icon': 'tryton-ok',
-                    },
                 'post_and_modify_maturities': post_definition,
                 })
         cls._buttons['post'].update({
                 'invisible': True,
                 })
-
-    @classmethod
-    @ModelView.button_action(
-        'account_invoice.act_reschedule_lines_to_pay_wizard')
-    def modify_maturities(cls, invoices):
-        pass
 
     @classmethod
     @ModelView.button
@@ -52,9 +42,9 @@ class Invoice(metaclass=PoolMeta):
         invoice_types = set([i.type for i in invoices])
 
         if (config.maturities_on_customer_post and 'out' in invoice_types):
-            return cls.modify_maturities(invoices)
+            return cls.reschedule_lines_to_pay(invoices)
         if (config.maturities_on_supplier_post and 'in' in invoice_types):
-            return cls.modify_maturities(invoices)
+            return cls.reschedule_lines_to_pay(invoices)
 
     def set_maturities(self, maturity_dates):
         pool = Pool()
