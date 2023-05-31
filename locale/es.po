@@ -10,6 +10,14 @@ msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
 msgstr "Mostrar vencimientos al contabilizar facturas de proveedor"
 
+msgctxt "field:account.move.line.reschedule.start,terms:"
+msgid "Terms"
+msgstr "Plazos"
+
+msgctxt "field:account.move.line.reschedule.term,description:"
+msgid "Description"
+msgstr "Descripción"
+
 msgctxt "model:ir.action,name:"
 msgid "Post/Modify Maturities"
 msgstr "Contabilizar/modificar vencimientos"
