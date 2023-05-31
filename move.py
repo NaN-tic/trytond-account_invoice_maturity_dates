@@ -10,6 +10,13 @@ class RescheduleLines(Wizard):
     "Reschedule Lines"
     __name__ = 'account.move.line.reschedule'
 
+    @classmethod
+    def __setup__(cls):
+        super().__setup__()
+        for button in cls.start.buttons:
+            if button.state == 'preview':
+                button.validate = None
+
     def default_start(self, fields):
         values = super().default_start(fields)
         terms = []
