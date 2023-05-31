@@ -2,8 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/group[@id='buttons']/button[@name='post']"
-            position="after">
-        <button name="post_and_modify_maturities"/>
+    <xpath expr="/tree" position="inside">
+        <field name="description" expand="1"/>
     </xpath>
 </data>
