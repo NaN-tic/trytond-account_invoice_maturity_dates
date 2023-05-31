@@ -22,13 +22,6 @@
             <field name="name">configuration_form</field>
         </record>
 
-        <!-- account.move.line.reschedule -->
-        <record model="ir.ui.view" id="move_line_reschedule_start_view_form">
-            <field name="model">account.move.line.reschedule.start</field>
-            <field name="inherit" ref="account.move_line_reschedule_start_view_form"/>
-            <field name="name">move_line_reschedule_start_form</field>
-        </record>
-
         <!-- ir.model.button -->
         <record model="ir.model.button" id="invoice_post_and_modify_maturities_button">
             <field name="name">post_and_modify_maturities</field>

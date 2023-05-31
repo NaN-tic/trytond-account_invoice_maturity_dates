@@ -10,4 +10,7 @@
         <label name="number"/>
         <field name="number"/>
     </xpath>
+    <xpath expr="/form" position="inside">
+        <field name="terms" colspan="4"/>
+    </xpath>
 </data>
