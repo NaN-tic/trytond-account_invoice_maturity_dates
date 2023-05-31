@@ -4,5 +4,7 @@
 <data>
     <xpath expr="/tree" position="inside">
         <field name="description" expand="1"/>
+        <field name="payment_type" expand="1"/>
+        <field name="bank_account" expand="1"/>
     </xpath>
 </data>
