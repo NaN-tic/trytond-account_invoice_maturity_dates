@@ -19,6 +19,8 @@ class RescheduleLines(Wizard):
                     'amount': record.amount,
                     'currency': values.get('currency'),
                     'description': record.description,
+                    'payment_type': record.payment_type.id,
+                    'bank_account': record.bank_account.id,
                     })
         values['terms'] = terms
         return values
@@ -28,8 +30,12 @@ class RescheduleLines(Wizard):
         move_description, = {r.move.description for r in self.records}
         values['description'] = move_description
         line_description, = {r.description for r in self.records}
-        for value in values.get('terms', None):
+        payment_type, = {r.payment_type.id for r in self.records}
+        bank_account, = {r.bank_account.id for r in self.records}
+        for value in values.get('terms', []):
             value['description'] = line_description
+            value['payment_type'] = payment_type
+            value['bank_account'] = bank_account
         return values
 
     @classmethod
@@ -42,6 +48,10 @@ class RescheduleLines(Wizard):
             for term in terms:
                 if term.date == line.maturity_date:
                     line.description = term.description
+                    line.payment_type = term.payment_type
+                    line.bank_account = term.bank_account
+                    if not term.bank_account:
+                        line.on_change_payment_type()
 
         return move, balance_line
 
@@ -62,3 +72,5 @@ class RescheduleLinesTerm(metaclass=PoolMeta):
     __name__ = 'account.move.line.reschedule.term'
 
     description = fields.Char("Description")
+    payment_type = fields.Many2One('account.payment.type', 'Payment Type')
+    bank_account = fields.Many2One('bank.account', 'Bank Account')

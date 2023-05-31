@@ -18,6 +18,14 @@ msgctxt "field:account.move.line.reschedule.term,description:"
 msgid "Description"
 msgstr "Descripció"
 
+msgctxt "field:account.move.line.reschedule.term,payment_type:"
+msgid "Payment Type"
+msgstr "Tipus de pagament"
+
+msgctxt "field:account.move.line.reschedule.term,bank_account:"
+msgid "Bank Account"
+msgstr "Compte bancària"
+
 msgctxt "model:ir.action,name:"
 msgid "Post/Modify Maturities"
 msgstr "Comptabilitza/modificar venciments"
