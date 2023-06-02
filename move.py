@@ -26,19 +26,24 @@ class RescheduleLines(Wizard):
                     'amount': record.amount,
                     'currency': values.get('currency'),
                     'description': record.description,
-                    'payment_type': record.payment_type.id,
-                    'bank_account': record.bank_account.id,
+                    'payment_type': (record.payment_type.id
+                        if record.payment_type else None),
+                    'bank_account': (record.bank_account.id
+                        if record.bank_account else None),
                     })
         values['terms'] = terms
         return values
 
     def default_preview(self, fields):
         values = super().default_preview(fields)
-        move_description, = {r.move.description for r in self.records}
+        move_description, = {r.move.description for r in self.records
+            if r.move}
         values['description'] = move_description
         line_description, = {r.description for r in self.records}
-        payment_type, = {r.payment_type.id for r in self.records}
-        bank_account, = {r.bank_account.id for r in self.records}
+        payment_type, = {r.payment_type.id for r in self.records
+            if r.payment_type}
+        bank_account, = {r.bank_account.id for r in self.records
+            if r.bank_account}
         for value in values.get('terms', []):
             value['description'] = line_description
             value['payment_type'] = payment_type
