@@ -38,22 +38,23 @@ class RescheduleLines(Wizard):
         values = super().default_preview(fields)
 
         move_descriptions = {r.move.description for r in self.records
-            if r.move}
+            if r.move and r.move.description}
         if move_descriptions:
             values['description'] = move_descriptions[0]
 
-        line_descriptions = {r.description for r in self.records}
+        line_descriptions = {r.description for r in self.records
+            if r.description}
         payment_types = {r.payment_type.id for r in self.records
             if r.payment_type}
         bank_accounts = {r.bank_account.id for r in self.records
             if r.bank_account}
         for value in values.get('terms', []):
             if line_descriptions:
-                value['description'] = line_descriptions[0]
+                value['description'] = list(line_descriptions)[0]
             if payment_types:
-                value['payment_type'] = payment_types[0]
+                value['payment_type'] = list(payment_types)[0]
             if bank_accounts:
-                value['bank_account'] = bank_accounts[0]
+                value['bank_account'] = list(bank_accounts)[0]
         return values
 
     @classmethod
