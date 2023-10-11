@@ -1,8 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from decimal import Decimal
-from trytond.model import Model, ModelView, fields
-from trytond.pyson import Eval
+from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 
 
