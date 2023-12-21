@@ -68,7 +68,10 @@ class RescheduleLines(Wizard):
                 if term.date == line.maturity_date:
                     line.description = term.description
                     line.payment_type = term.payment_type
-                    line.bank_account = term.bank_account
+                    if getattr(term, 'bank_account', None):
+                        line.bank_account = term.bank_account
+                    else:
+                        line.bank_account = None
                     if not term.bank_account:
                         line.on_change_payment_type()
 
