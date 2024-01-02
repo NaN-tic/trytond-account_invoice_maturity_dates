@@ -1,8 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from decimal import Decimal
-from trytond.model import Model, ModelView, fields
-from trytond.pyson import Eval
+from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 
 
@@ -20,7 +18,7 @@ class Invoice(metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(Invoice, cls).__setup__()
+        super().__setup__()
         post_definition = cls._buttons['post'].copy()
         post_definition['icon'] = 'tryton-ok'
         # We must duplicate the button otherwise the return value is not
@@ -31,6 +29,7 @@ class Invoice(metaclass=PoolMeta):
         cls._buttons['post'].update({
                 'invisible': True,
                 })
+        cls._check_modify_exclude |= {'invoice_report_cache_id'}
 
     @classmethod
     @ModelView.button
@@ -45,3 +44,17 @@ class Invoice(metaclass=PoolMeta):
                 or (config.maturities_on_supplier_post
                     and 'in' in invoice_types)):
             return cls.reschedule_lines_to_pay(invoices)
+
+
+#class RescheduleLinesToPay(Wizard):
+class RescheduleLinesToPay(metaclass=PoolMeta):
+    "Reschedule Lines to Pay"
+    __name__ = 'account.invoice.lines_to_pay.reschedule'
+
+    def do_start(self, action):
+        if self.record:
+            self.record.invoice_report_format = None
+            self.record.invoice_report_cache_id = None
+            self.record.invoice_report_cache = None
+            self.record.save()
+        return super().do_start(action)

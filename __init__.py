@@ -13,4 +13,5 @@ def register():
         module='account_invoice_maturity_dates', type_='model')
     Pool.register(
         move.RescheduleLines,
+        invoice.RescheduleLinesToPay,
         module='account_invoice_maturity_dates', type_='wizard')
