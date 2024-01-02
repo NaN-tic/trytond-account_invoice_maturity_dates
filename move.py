@@ -3,10 +3,9 @@
 from trytond.model import fields
 from trytond.pyson import Eval
 from trytond.pool import PoolMeta
-from trytond.wizard import Wizard
 
 
-class RescheduleLines(Wizard):
+class RescheduleLines(metaclass=PoolMeta):
     "Reschedule Lines"
     __name__ = 'account.move.line.reschedule'
 
