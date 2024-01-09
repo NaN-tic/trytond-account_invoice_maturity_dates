@@ -71,7 +71,7 @@ class RescheduleLines(metaclass=PoolMeta):
                         line.bank_account = term.bank_account
                     else:
                         line.bank_account = None
-                    if not term.bank_account:
+                    if not line.bank_account:
                         line.on_change_payment_type()
 
         return move, balance_line
