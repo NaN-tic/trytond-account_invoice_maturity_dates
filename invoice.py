@@ -4,15 +4,6 @@ from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 
 
-class Configuration(metaclass=PoolMeta):
-    __name__ = 'account.configuration'
-
-    maturities_on_customer_post = fields.Boolean('Show Maturities on '
-        'Customer Invoices Post')
-    maturities_on_supplier_post = fields.Boolean('Show Maturities on '
-        'Supplier Invoices Post')
-
-
 class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
 
@@ -46,13 +37,15 @@ class Invoice(metaclass=PoolMeta):
             return cls.reschedule_lines_to_pay(invoices)
 
 
-#class RescheduleLinesToPay(Wizard):
 class RescheduleLinesToPay(metaclass=PoolMeta):
     "Reschedule Lines to Pay"
     __name__ = 'account.invoice.lines_to_pay.reschedule'
 
     def do_start(self, action):
-        if self.record:
+        Config = Pool().get('account.configuration')
+
+        config = Config(1)
+        if self.record and config.maturities_invoice_report:
             self.record.invoice_report_format = None
             self.record.invoice_report_cache_id = None
             self.record.invoice_report_cache = None
