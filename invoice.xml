@@ -15,13 +15,6 @@
             <field name="name">invoice_tree</field>
         </record>
 
-        <!-- account.configuration -->
-        <record model="ir.ui.view" id="configuration_view_form">
-            <field name="model">account.configuration</field>
-            <field name="inherit" ref="account.configuration_view_form"/>
-            <field name="name">configuration_form</field>
-        </record>
-
         <!-- ir.model.button -->
         <record model="ir.model.button" id="invoice_post_and_modify_maturities_button">
             <field name="name">post_and_modify_maturities</field>

@@ -2,6 +2,10 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "field:account.configuration,maturities_invoice_report:"
+msgid "Maturities Invoice Report"
+msgstr "Venciments informe factura"
+
 msgctxt "field:account.configuration,maturities_on_customer_post:"
 msgid "Show Maturities on Customer Invoices Post"
 msgstr "Mostra venciments al comptabilitzar factures de client"
@@ -10,9 +14,28 @@ msgctxt "field:account.configuration,maturities_on_supplier_post:"
 msgid "Show Maturities on Supplier Invoices Post"
 msgstr "Mostra venciments al comptabilitzar factures de proveïdor"
 
+msgctxt ""
+"field:account.configuration.default_account,maturities_invoice_report:"
+msgid "Maturities Invoice Report"
+msgstr "Venciments informe factura"
+
+msgctxt ""
+"field:account.configuration.default_account,maturities_on_customer_post:"
+msgid "Show Maturities on Customer Invoices Post"
+msgstr "Mostra venciments al comptabilitzar factures de client"
+
+msgctxt ""
+"field:account.configuration.default_account,maturities_on_supplier_post:"
+msgid "Show Maturities on Supplier Invoices Post"
+msgstr "Mostra venciments al comptabilitzar factures de proveïdor"
+
 msgctxt "field:account.move.line.reschedule.start,terms:"
 msgid "Terms"
 msgstr "Terminis"
+
+msgctxt "field:account.move.line.reschedule.term,bank_account:"
+msgid "Bank Account"
+msgstr "Compte bancària"
 
 msgctxt "field:account.move.line.reschedule.term,description:"
 msgid "Description"
@@ -22,9 +45,20 @@ msgctxt "field:account.move.line.reschedule.term,payment_type:"
 msgid "Payment Type"
 msgstr "Tipus de pagament"
 
-msgctxt "field:account.move.line.reschedule.term,bank_account:"
-msgid "Bank Account"
-msgstr "Compte bancària"
+msgctxt "help:account.configuration,maturities_invoice_report:"
+msgid ""
+"If we mark it as true, remove invoice report from invoice and create new "
+"invoice report"
+msgstr ""
+"Si es marca, elimina l'informe de factura i crea un nou informe de factura"
+
+msgctxt ""
+"help:account.configuration.default_account,maturities_invoice_report:"
+msgid ""
+"If we mark it as true, remove invoice report from invoice and create new "
+"invoice report"
+msgstr ""
+"Si es marca, elimina l'informe de factura i crea un nou informe de factura"
 
 msgctxt "model:ir.action,name:"
 msgid "Post/Modify Maturities"
