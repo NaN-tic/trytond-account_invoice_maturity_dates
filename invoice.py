@@ -38,7 +38,6 @@ class Invoice(metaclass=PoolMeta):
 
 
 class RescheduleLinesToPay(metaclass=PoolMeta):
-    "Reschedule Lines to Pay"
     __name__ = 'account.invoice.lines_to_pay.reschedule'
 
     def do_start(self, action):
@@ -46,8 +45,7 @@ class RescheduleLinesToPay(metaclass=PoolMeta):
 
         config = Config(1)
         if self.record and config.maturities_invoice_report:
-            self.record.invoice_report_format = None
-            self.record.invoice_report_cache_id = None
-            self.record.invoice_report_cache = None
-            self.record.save()
+            if self.record.invoice_report_cache:
+                self.record.create_invoice_report_revision()
+                self.record.save()
         return super().do_start(action)
