@@ -36,8 +36,8 @@ class RescheduleLines(metaclass=PoolMeta):
     def default_preview(self, fields):
         values = super().default_preview(fields)
 
-        move_descriptions = {r.move.description for r in self.records
-            if r.move and r.move.description}
+        move_descriptions = list({r.move.description for r in self.records
+            if r.move and r.move.description})
         if move_descriptions:
             values['description'] = move_descriptions[0]
 
@@ -49,7 +49,7 @@ class RescheduleLines(metaclass=PoolMeta):
             if r.bank_account}
         for value in values.get('terms', []):
             if line_descriptions:
-                value['description'] = list(line_descriptions)[0]
+                value['description'] = line_descriptions[0]
             if payment_types:
                 value['payment_type'] = list(payment_types)[0]
             if bank_accounts:
