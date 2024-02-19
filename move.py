@@ -41,19 +41,19 @@ class RescheduleLines(metaclass=PoolMeta):
         if move_descriptions:
             values['description'] = move_descriptions[0]
 
-        line_descriptions = {r.description for r in self.records
-            if r.description}
-        payment_types = {r.payment_type.id for r in self.records
-            if r.payment_type}
-        bank_accounts = {r.bank_account.id for r in self.records
-            if r.bank_account}
+        line_descriptions = list({r.description for r in self.records
+            if r.description})
+        payment_types = list({r.payment_type.id for r in self.records
+            if r.payment_type})
+        bank_accounts = list({r.bank_account.id for r in self.records
+            if r.bank_account})
         for value in values.get('terms', []):
             if line_descriptions:
                 value['description'] = line_descriptions[0]
             if payment_types:
-                value['payment_type'] = list(payment_types)[0]
+                value['payment_type'] = payment_types[0]
             if bank_accounts:
-                value['bank_account'] = list(bank_accounts)[0]
+                value['bank_account'] = bank_accounts[0]
         return values
 
     @classmethod
