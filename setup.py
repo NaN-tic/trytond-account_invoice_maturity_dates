@@ -9,7 +9,7 @@ from configparser import ConfigParser
 
 MODULE = 'account_invoice_maturity_dates'
 PREFIX = 'trytonspain'
-MODULE2PREFIX = {'account_move_draft': 'trytonspain'}
+MODULE2PREFIX = {}
 OWNER = {
     'nantic':'NaN-tic',
     'trytonzz':'nanticzz',
