@@ -60,10 +60,6 @@ msgid ""
 msgstr ""
 "Si es marca, elimina l'informe de factura i crea un nou informe de factura"
 
-msgctxt "model:ir.action,name:"
-msgid "Post/Modify Maturities"
-msgstr "Comptabilitza/modificar venciments"
-
 msgctxt ""
 "model:ir.model.button,string:invoice_post_and_modify_maturities_button"
 msgid "Post"
