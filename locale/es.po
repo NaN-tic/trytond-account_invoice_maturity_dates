@@ -62,10 +62,6 @@ msgstr ""
 "Si se marca, elimina el informe de factura y crea un nuevo informe de "
 "factura"
 
-msgctxt "model:ir.action,name:"
-msgid "Post/Modify Maturities"
-msgstr "Contabilizar/modificar vencimientos"
-
 msgctxt ""
 "model:ir.model.button,string:invoice_post_and_modify_maturities_button"
 msgid "Post"
