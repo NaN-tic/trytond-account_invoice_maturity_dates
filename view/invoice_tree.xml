@@ -3,7 +3,6 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="/tree/field[@name='description']" position="after">
-        <button name="reschedule_lines_to_pay" tree_invisible="1"/>
         <button name="post_and_modify_maturities" tree_invisible="1"/>
     </xpath>
 </data>
