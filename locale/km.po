@@ -1,0 +1,104 @@
+#
+msgid ""
+msgstr ""
+"Language: km\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:account.configuration,maturities_invoice_report:"
+msgid "Maturities Invoice Report"
+msgstr "របាយការណ៍វិក្កយបត្រពេលកែថ្ងៃដល់កំណត់"
+
+msgctxt "field:account.configuration,maturities_on_customer_post:"
+msgid "Show Maturities on Customer Invoices Post"
+msgstr "បង្ហាញកាលបរិច្ឆេទដល់កំណត់ពេលកត់ត្រាវិក្កយបត្រអតិថិជន"
+
+msgctxt "field:account.configuration,maturities_on_supplier_post:"
+msgid "Show Maturities on Supplier Invoices Post"
+msgstr "បង្ហាញកាលបរិច្ឆេទដល់កំណត់ពេលកត់ត្រាវិក្កយបត្រអ្នកផ្គត់ផ្គង់"
+
+msgctxt ""
+"field:account.configuration.default_account,maturities_invoice_report:"
+msgid "Maturities Invoice Report"
+msgstr "របាយការណ៍វិក្កយបត្រពេលកែថ្ងៃដល់កំណត់"
+
+msgctxt ""
+"field:account.configuration.default_account,maturities_on_customer_post:"
+msgid "Show Maturities on Customer Invoices Post"
+msgstr "បង្ហាញកាលបរិច្ឆេទដល់កំណត់ពេលកត់ត្រាវិក្កយបត្រអតិថិជន"
+
+msgctxt ""
+"field:account.configuration.default_account,maturities_on_supplier_post:"
+msgid "Show Maturities on Supplier Invoices Post"
+msgstr "បង្ហាញកាលបរិច្ឆេទដល់កំណត់ពេលកត់ត្រាវិក្កយបត្រអ្នកផ្គត់ផ្គង់"
+
+msgctxt "field:account.move.line.reschedule.start,terms:"
+msgid "Terms"
+msgstr "លក្ខខណ្ឌ"
+
+msgctxt "field:account.move.line.reschedule.term,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.line.reschedule.term,description:"
+msgid "Description"
+msgstr "សេចក្តីពិពណ៌នា"
+
+msgctxt "field:account.move.line.reschedule.term,payment_type:"
+msgid "Payment Type"
+msgstr "ប្រភេទការទូទាត់"
+
+msgctxt "help:account.configuration,maturities_invoice_report:"
+msgid ""
+"If we mark it as true, remove invoice report from invoice and create new "
+"invoice report"
+msgstr "បើធីក លុបរបាយការណ៍វិក្កយបត្រចាស់ពីវិក្កយបត្រ ហើយបង្កើតថ្មី។"
+
+msgctxt "help:account.configuration.default_account,maturities_invoice_report:"
+msgid ""
+"If we mark it as true, remove invoice report from invoice and create new "
+"invoice report"
+msgstr "បើធីក លុបរបាយការណ៍វិក្កយបត្រចាស់ពីវិក្កយបត្រ ហើយបង្កើតថ្មី។"
+
+msgctxt ""
+"model:ir.model.button,string:invoice_post_and_modify_maturities_button"
+msgid "Post"
+msgstr "កត់ត្រាក្នុងបញ្ជីគណនេយ្យ"
+
+msgctxt "view:account.configuration:"
+msgid "Customer Invoices"
+msgstr "វិក្កយបត្រអតិថិជន"
+
+msgctxt "view:account.configuration:"
+msgid "Force maturities revision when posting:"
+msgstr "តម្រូវឱ្យពិនិត្យកាលបរិច្ឆេទដល់កំណត់ពេលកត់ត្រាក្នុងបញ្ជី៖"
+
+msgctxt "view:account.configuration:"
+msgid "Supplier Invoices"
+msgstr "វិក្កយបត្រអ្នកផ្គត់ផ្គង់"
+
+msgctxt "view:account.invoice:"
+msgid "Modify Maturities"
+msgstr "កែប្រែកាលបរិច្ឆេទដល់កំណត់"
+
+msgctxt "view:account.invoice:"
+msgid "Post"
+msgstr "កត់ត្រាក្នុងបញ្ជីគណនេយ្យ"
+
+msgctxt "field:account.invoice.maturity_date,invoice:"
+msgid "Invoice"
+msgstr "វិក្កយបត្រ"
+
+msgctxt "field:account.invoice.modify_maturities.start,invoice:"
+msgid "Invoice"
+msgstr "វិក្កយបត្រ"
+
+msgctxt "field:account.invoice.modify_maturities.start,invoices:"
+msgid "Invoices"
+msgstr "វិក្កយបត្រ"
+
+msgctxt "field:account.invoice.modify_maturities.start,maturities:"
+msgid "Maturities"
+msgstr "កាលបរិច្ឆេទដល់កំណត់"
